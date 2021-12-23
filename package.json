@@ -27,7 +27,7 @@
     "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject",
     "express": "node server.ts",
-    "serve": "npx serve -s build",
+    "serve": "npx serve -s build -l tcp://0.0.0.0:$PORT",
     "build-express": "npm run build && node server.ts",
     "build-serve": "npm run build && npx serve -s build"
   },
