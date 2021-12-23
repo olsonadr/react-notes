@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { FaBars } from "react-icons/fa";
 import logo from '../img/small_logo.png'
+import { User } from "@auth0/auth0-react";
 // import logo from './img/logo.png'
 
 // Create styled components for the navbar (emotion.js)
@@ -55,9 +56,14 @@ const NavImg = styled.img`
 function Navbar(props: {
   setSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   sidebar: boolean;
+  user: User | undefined;
+  auth: boolean;
+  loading: boolean;
 }) {
   // Create wrapper to toggle sidebar using setState passed in props
-  function toggleSidebar() { props.setSidebar(!props.sidebar); }
+  function toggleSidebar() {
+    props.setSidebar(!props.sidebar);
+  }
 
   return (
     <>

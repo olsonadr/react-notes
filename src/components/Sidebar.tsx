@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
+import { User } from "@auth0/auth0-react";
 // import { AiOutlineClose } from "react-icons/ai";
 // import "./styles/root.css"
 
@@ -48,6 +49,9 @@ const SideButtonList = styled.ul`
 function Sidebar(props: {
   setSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   sidebar: boolean;
+  user: User | undefined;
+  auth: boolean;
+  loading: boolean;
 }) {
   // Return jsx for component
   return (

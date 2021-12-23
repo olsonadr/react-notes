@@ -1,5 +1,8 @@
 import React from "react";
 import styled from "@emotion/styled";
+import LoginButton from "../LoginButton";
+import LogoutButton from "../LogoutButton";
+import { User } from "@auth0/auth0-react";
 
 // Create styled components for the navbar (emotion.js)
 const Main = styled.div`
@@ -25,23 +28,52 @@ const Main = styled.div`
 `;
 
 const H1 = styled.h1`
-  margin-top: 2rem;
-  font-size: 4rem;
-  font-weight: bold; 
+  /* margin-top: 2rem; */
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: bold;
+`;
+
+const VertFlex = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 `;
 
 // Exported MainPanel react component
 function MainPanel(props: {
   setSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   sidebar: boolean;
+  user: User | undefined;
+  auth: boolean;
+  loading: boolean;
 }) {
   // Return jsx output for this component
   return (
     <>
       <Main className={props.sidebar ? "side-active" : ""}>
-        {/* <div className="MainPanel"> */}
-        <H1>Hello!</H1>
-        {/* </div> */}
+        {/* If logged in: */}
+        {props.auth && !props.loading && (
+          <VertFlex>
+            <H1>Hello!</H1>
+            <LogoutButton className="new-line" />
+          </VertFlex>
+        )}
+        {/* If logged out: */}
+        {!props.auth && !props.loading && (
+          <VertFlex>
+            <H1>Welcome!<br/>Please login or signup!</H1>
+            <LoginButton className="new-line" />
+          </VertFlex>
+        )}
+        {/* If loading authentication stuff */}
+        {props.loading && (
+          <VertFlex>
+            <H1>Loading...</H1>
+          </VertFlex>
+        )}
       </Main>
     </>
   );
