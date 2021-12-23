@@ -35,7 +35,8 @@ const NavRight = styled.div`
 `;
 
 const SidebarToggle = styled(FaBars)`
-  font-size: 1rem;
+  font-size: 2rem;
+  /* font-size: 1rem; */
   border-radius: 0.5rem;
   padding: 0.5rem;
   cursor: pointer;

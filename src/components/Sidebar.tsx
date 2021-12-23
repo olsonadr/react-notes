@@ -12,7 +12,7 @@ const Side = styled.div`
   justify-content: center;
   position: fixed;
   top: var(--nav-height);
-  padding: 5px;
+  padding: var(--sidebar-padding);
   /* hide sidebar by default w/ transition */
   width: 0;
   transition: var(--sidebar-out-time);

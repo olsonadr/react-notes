@@ -14,8 +14,9 @@
   --fg-text: rgb(44, 42, 54);
   --fg-text-bold: rgb(62, 59, 75);
 
-  --nav-height: 4rem;
+  --nav-height: 5rem;
   --sidebar-width: 250px;
+  --sidebar-padding: 5px;
   --sidebar-in-time: 400ms;
   --sidebar-out-time: 800ms;
 
@@ -24,9 +25,4 @@
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
-
-html {
-  /* background-color: var(--bg);
-  color: var(--bg-text) */
 }

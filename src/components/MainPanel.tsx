@@ -17,7 +17,7 @@ const Main = styled.div`
   transition: var(--sidebar-out-time);
   /* if sidebar active, offset left to fit */
   &.side-active {
-    left: var(--sidebar-width);
+    left: calc(var(--sidebar-width) + 2*var(--sidebar-padding));
     transition: var(--sidebar-in-time);
   }
 `;
