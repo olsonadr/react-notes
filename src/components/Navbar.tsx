@@ -51,6 +51,7 @@ const NavImg = styled.img`
   height: 4rem;
 `;
 
+// Exported Navbar react component
 function Navbar(props: {
   setSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   sidebar: boolean;

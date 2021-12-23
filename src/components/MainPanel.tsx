@@ -11,14 +11,16 @@ const Main = styled.div`
   position: fixed;
   top: var(--nav-height);
   padding: 5px;
+  overflow: scroll;
   /* take full width with hidden sidebar */
   left: 0;
   right: 0;
-  transition: var(--sidebar-out-time);
+  transition-property: left;
+  transition-duration: var(--sidebar-out-time);
   /* if sidebar active, offset left to fit */
   &.side-active {
-    left: calc(var(--sidebar-width) + 2*var(--sidebar-padding));
-    transition: var(--sidebar-in-time);
+    left: calc(var(--sidebar-width) + 2 * var(--sidebar-padding));
+    transition-duration: var(--sidebar-in-time);
   }
 `;
 
@@ -28,6 +30,7 @@ const H1 = styled.h1`
   font-weight: bold; 
 `;
 
+// Exported MainPanel react component
 function MainPanel(props: {
   setSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   sidebar: boolean;
