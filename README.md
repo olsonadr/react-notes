@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# React Notes
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a simple note-taking app that is planned to allow each logged-in user to have a tree of notes of many possible formats, all editable from within this single-page-application. It is also the project by which I am familiarizing myself with React, Emotion.js, Jest, Typescript, Auth0, and the like. This project was initially bootstrapped using the React bootstrapper with the Typescript template. 
 
 ## Available Scripts
 
