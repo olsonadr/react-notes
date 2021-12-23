@@ -1,2 +1,2 @@
 release: npm run build
-web: npx serve -s build
+web: npm run express
