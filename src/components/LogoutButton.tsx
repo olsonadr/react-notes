@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import styled from "@emotion/styled";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -16,8 +16,23 @@ const Butt = styled.button`
   }
 `;
 
+// Setup props of LoginButton (enabling default vals)
+// Source: https://dev.to/bytebodger/default-props-in-react-typescript-2o5o
+export type AllPropsRequired<Object> = {
+  [Property in keyof Object]-?: Object[Property];
+};
+interface Props extends PropsWithChildren<any> {
+  className?: string,
+};
+
 // Exported LogoutButton react component
-function LogoutButton(props: { className: string } = {className: ""}) {
+function LogoutButton(props: Props) {
+  // Set default props values
+  const args: AllPropsRequired<Props> = {
+    ...props,
+    className: props.className !== undefined ? props.className : "",
+  };
+  
   // Create Auth0 logout callback
   const { logout } = useAuth0();
 
@@ -25,7 +40,7 @@ function LogoutButton(props: { className: string } = {className: ""}) {
   return (
     <>
       <Butt
-        className={props.className}
+        className={args.className}
         onClick={() => {
           logout({ returnTo: window.location.origin });
         }}

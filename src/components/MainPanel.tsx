@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
-import LoginButton from "../LoginButton";
-import LogoutButton from "../LogoutButton";
+import LoginButton from "./LoginButton";
+import LogoutButton from "./LogoutButton";
 import { User } from "@auth0/auth0-react";
 
 // Create styled components for the navbar (emotion.js)
@@ -64,7 +64,7 @@ function MainPanel(props: {
         {/* If logged out: */}
         {!props.auth && !props.loading && (
           <VertFlex>
-            <H1>Welcome!<br/>Please login or signup!</H1>
+            <H1>Welcome! Please login or signup!</H1>
             <LoginButton className="new-line" />
           </VertFlex>
         )}
