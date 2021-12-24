@@ -2,11 +2,11 @@
 const express = require("express");
 const path = require("path");
 const app = express();
-const { Client } = require("pg");
+const { Pool } = require("pg");
 require('dotenv').config();
 
-// Setup postgresql connection
-const client = new Client({
+// Setup postgresql connection pool
+const pool = new Pool({
     user: process.env.PSQL_USER,
     host: process.env.PSQL_HOST,
     database: process.env.PSQL_DB,
@@ -14,15 +14,18 @@ const client = new Client({
     port: process.env.PSQL_PORT,
 });
 
+// Setup postgresql pool error handling
+pool.on('error', (err, client) => {
+    console.error('PSQL Error: ', err);
+});
+
 // Function to check for new users, sign them up as needed, and return their info
 // const checkNewUser = async (email:string, name:string, picture:string) => {
 const checkNewUser = async (email, name, picture) => {
     // Check if user is new to the server
-    client.connect();
+    const client = await pool.connect();
     let res;
     try {
-        // const selquery = `SELECT name FROM users WHERE email='manlylvrby@gmail.com';`;
-        // const selvals = [email];
         const selquery = `SELECT id FROM users WHERE email = '${email}';`;
         res = await client.query(selquery);
     } catch (err) {
@@ -40,10 +43,7 @@ const checkNewUser = async (email, name, picture) => {
         res = undefined;
         try {
             const insquery = `INSERT INTO users(email, name, picture) VALUES('${email}', '${name}', '${picture}') RETURNING id;`;
-            // const insquery = `INSERT INTO users(email, name, picture) VALUES($1, $2, $3) RETURNING id;`;
-            // const insvals = [email, name, picture];
             res = await client.query(insquery);
-            // let {res, err} = await client.query(insquery, insvals);
         } catch (err) {
             console.error(err.stack);
             client.end();
@@ -58,9 +58,6 @@ const checkNewUser = async (email, name, picture) => {
     let data = undefined;
     try {
         const sel2query = `SELECT * FROM users WHERE id=${id};`;
-        // const sel2query = `SELECT * FROM users WHERE email = '$1';`;
-        // const sel2vals = [email];
-        // const {sel2res, sel2err} = await client.query(sel2query, sel2vals);
         res = await client.query(sel2query);
         if (res && res.rowCount > 0) data = res.rows[0];
     } catch (err) {
@@ -69,6 +66,7 @@ const checkNewUser = async (email, name, picture) => {
         return; // redirect to error page
     }
 
+    // Close client connection
     client.end();
 
     // Return result (object filled with user info)
