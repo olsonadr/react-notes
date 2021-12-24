@@ -16,13 +16,14 @@ const authClientId =
   process.env.REACT_APP_AUTH0_CLIENT_ID !== undefined
     ? process.env.REACT_APP_AUTH0_CLIENT_ID
     : "";
-    
+
+// Render the react app
 ReactDOM.render(
   <React.StrictMode>
     <Auth0Provider
       domain={authDomain}
       clientId={authClientId}
-      redirectUri={window.location.origin}
+      redirectUri={`${window.location.origin}/auth`}
     >
       <App />
     </Auth0Provider>

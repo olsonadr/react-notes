@@ -18,14 +18,32 @@ const AppComp = styled.div`
 
 // Exported App react component
 function App() {
-  const [ sidebar, setSidebar ] = useState(false);
+  const [sidebar, setSidebar] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
 
   return (
     <AppComp>
-      <Navbar setSidebar={setSidebar} sidebar={sidebar} user={user} auth={isAuthenticated} loading={isLoading} />
-      <Sidebar setSidebar={setSidebar} sidebar={sidebar} user={user} auth={isAuthenticated} loading={isLoading} />
-      <MainPanel setSidebar={setSidebar} sidebar={sidebar} user={user} auth={isAuthenticated} loading={isLoading} />
+      <Navbar
+        setSidebar={setSidebar}
+        sidebar={sidebar}
+        user={user}
+        auth={isAuthenticated}
+        loading={isLoading}
+      />
+      <Sidebar
+        setSidebar={setSidebar}
+        sidebar={sidebar}
+        user={user}
+        auth={isAuthenticated}
+        loading={isLoading}
+      />
+      <MainPanel
+        setSidebar={setSidebar}
+        sidebar={sidebar}
+        user={user}
+        auth={isAuthenticated}
+        loading={isLoading}
+      />
     </AppComp>
   );
 }
