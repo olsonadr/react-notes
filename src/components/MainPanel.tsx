@@ -55,9 +55,9 @@ function MainPanel(props: {
     <>
       <Main className={props.sidebar ? "side-active" : ""}>
         {/* If logged in: */}
-        {props.auth && !props.loading && (
+        {props.auth && props.user && !props.loading && (
           <VertFlex>
-            <H1>Hello!</H1>
+            <H1>Hello {props.user.name}!</H1>
             <LogoutButton className="new-line" />
           </VertFlex>
         )}
