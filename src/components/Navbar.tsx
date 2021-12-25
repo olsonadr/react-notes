@@ -231,7 +231,7 @@ const DropdownS = styled.div`
 // Dropdown Item Button/Container
 // const DropdownItemS = styled.button`
 const DropdownItemS = styled.div`
-  height: 50px;
+  height: 40px;
   /* width: 100%; */  /* necessary as button, not as div */
   display: flex;
   align-items: center;
