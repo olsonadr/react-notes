@@ -1,5 +1,5 @@
 // Dropdown inspired by: https://www.youtube.com/watch?v=IF6k0uZuypA&list=WL&index=3
-import React, { ReactComponentElement, useState } from "react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { FaBars } from "react-icons/fa";
 import { BsPersonCircle } from "react-icons/bs";
@@ -161,6 +161,14 @@ function NavItem(props: {
       }
     : () => {};
 
+  // Give props.children the Dropdown toggler function
+  const childrenWithProps = React.Children.map(props.children, child => {
+    if (React.isValidElement(child)) {
+      // @ts-ignore: Props type not checked correctly
+      return React.cloneElement(child, { dropdownToggle: click });
+    }
+  });
+
   // Return jsx for NavItem to render
   return (
     <li className="nav-item">
@@ -168,13 +176,14 @@ function NavItem(props: {
         {props.icon}
       </IconButton>
 
-      {open && props.children}
+      {open && childrenWithProps}
     </li>
   );
 }
 
-// Create styled components for the Dropdown (emotion.js)
-// Dropdown Container
+// Create styled components for the Dropdown (emotion.js);
+// z=[10,19], so should be in front of content (z=[0,9])
+//  but in front of other popups (z=[20,29]);
 const DropdownS = styled.div`
   background-color: var(--bg);
   position: absolute;
@@ -184,14 +193,46 @@ const DropdownS = styled.div`
   border: var(--border);
   border-radius: var(--border-radius);
   padding: 1rem;
-  overflow: hidden;
-  z-index: 2;
+  z-index: 11;
+
+  /* Sub-container that hides children overflow content */
+  & .overflow-hidden {
+    overflow: hidden;
+  }
+  /* Little arrow above dropdown pointing to source button */
+  &::after {
+    position: absolute;
+    left: auto;
+    right: 15px;
+    top: -8px;
+    content: "";
+    background-clip: padding-box;
+    padding: 7px;
+    transform: rotate(45deg);
+    box-shadow: -9px 0 7pba (27, 31, 35, 0.6);
+    z-index: 12;
+
+    background-color: var(--bg);
+    border: var(--border);
+    border-bottom-color: transparent;
+    border-right-color: transparent;
+  }
+  /* Click barrier div */
+  & + .click-barrier {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+  }
 `;
 
 // Dropdown Item Button/Container
-const DropdownItemS = styled.button`
+// const DropdownItemS = styled.button`
+const DropdownItemS = styled.div`
   height: 50px;
-  width: 100%;
+  /* width: 100%; */  /* necessary as button, not as div */
   display: flex;
   align-items: center;
   border-radius: var(--border-radius);
@@ -199,6 +240,7 @@ const DropdownItemS = styled.button`
   padding: 0.5rem;
   border: none;
   background-color: var(--bg);
+  cursor: pointer;
   color: var(--bg-text);
   &:hover {
     background-color: var(--bg-bold);
@@ -207,42 +249,49 @@ const DropdownItemS = styled.button`
 `;
 
 // Local DropdownMenu react component
-function DropdownMenu(props: { children?: JSX.Element }) {
+function DropdownMenu(props: {
+  dropdownToggle?: () => {};
+  children?: JSX.Element;
+}) {
   // Return jsx for DropdownMenu to render
   return (
-    <DropdownS>
-      <DropdownItem>My Profile</DropdownItem>
-      <DropdownItem leftIcon={<CogIcon />} rightIcon={<ChevronIcon />}>
-        Settings
-      </DropdownItem>
-    </DropdownS>
+    <>
+      <DropdownS>
+        <div className="dropdown-hidden">
+          <DropdownItem>My Profile</DropdownItem>
+          <DropdownItem leftIcon={<CogIcon />} rightIcon={<ChevronIcon />}>
+            Settings
+          </DropdownItem>
+        </div>
+      </DropdownS>
+      <div className="click-barrier" onClick={props.dropdownToggle} />
+    </>
   );
 }
 
- // Local DropdownItem react component
-  function DropdownItem(props: {
-    leftIcon?: string | JSX.Element;
-    rightIcon?: string | JSX.Element;
-    children?: string | JSX.Element;
-  }) {
-    // Return jsx for DropdownMenu to render
-    return (
-      <DropdownItemS>
-        {/* <IconButton className="right-bump">{props.leftIcon}</IconButton> */}
-        {props.leftIcon ? (
-          <IconButton className="right-bump">{props.leftIcon}</IconButton>
-        ) : (
-          <IconButton className="no-bg right-bump"></IconButton>
-        )}
+// Local DropdownItem react component
+function DropdownItem(props: {
+  leftIcon?: string | JSX.Element;
+  rightIcon?: string | JSX.Element;
+  children?: string | JSX.Element;
+}) {
+  // Return jsx for DropdownMenu to render
+  return (
+    <DropdownItemS>
+      {/* <IconButton className="right-bump">{props.leftIcon}</IconButton> */}
+      {props.leftIcon ? (
+        <IconButton className="right-bump">{props.leftIcon}</IconButton>
+      ) : (
+        <IconButton className="no-bg right-bump"></IconButton>
+      )}
 
-        {props.children}
+      {props.children}
 
-        {props.rightIcon && (
-          <IconButton className="right">{props.rightIcon}</IconButton>
-        )}
-        
-      </DropdownItemS>
-    );
-  }
+      {props.rightIcon && (
+        <IconButton className="right">{props.rightIcon}</IconButton>
+      )}
+    </DropdownItemS>
+  );
+}
 
 export default Navbar;
