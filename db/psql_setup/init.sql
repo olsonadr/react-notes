@@ -8,5 +8,6 @@ CREATE TABLE users (
     id SERIAL UNIQUE,
     email VARCHAR(50) UNIQUE PRIMARY KEY,
     name VARCHAR(50),
-    picture VARCHAR(100)
+    picture VARCHAR(2083),
+    user_id VARCHAR(50)
 );
