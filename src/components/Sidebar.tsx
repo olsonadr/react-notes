@@ -1,8 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { User } from "@auth0/auth0-react";
-// import { AiOutlineClose } from "react-icons/ai";
-// import "./styles/root.css"
+import { Profile } from "../interfaces";
 
 // Create styled components for the navbar (emotion.js)
 const Side = styled.div`
@@ -52,6 +51,7 @@ function Sidebar(props: {
   user: User | undefined;
   auth: boolean;
   loading: boolean;
+  profile: Profile | undefined;
 }) {
   // Return jsx for component
   return (

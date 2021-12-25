@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom";
 import Navbar from "../../components/Navbar";
+import testPropCombinations from "../utils/testPropCombinations";
 
 test("Navbar renders without exception", () => {
   // Setup options for each property
@@ -8,27 +9,32 @@ test("Navbar renders without exception", () => {
   const userOpt = [undefined];
   const authOpt = [true, false];
   const loadingOpt = [true, false];
+  const profileOpt = [undefined];
+  const propCombs = {
+    setSidebar: setSidebarOpt,
+    sidebar: sidebarOpt,
+    user: userOpt,
+    auth: authOpt,
+    loading: loadingOpt,
+    profile: profileOpt,
+  };
 
-  // Renders without error for all combinations of params
-  setSidebarOpt.forEach((setSidebar) => {
-    sidebarOpt.forEach((sidebar) => {
-      userOpt.forEach((user) => {
-        authOpt.forEach((auth) => {
-          loadingOpt.forEach((loading) => {
-            const div = document.createElement("div");
-            ReactDOM.render(
-              <Navbar
-                setSidebar={setSidebar}
-                sidebar={sidebar}
-                user={user}
-                auth={auth}
-                loading={loading}
-              />,
-              div
-            );
-          });
-        });
-      });
-    });
-  });
+  // Setup callback to test each combinatio
+  const callback = (props: { [key: string]: any }) => {
+    const div = document.createElement("div");
+    ReactDOM.render(
+      <Navbar
+        setSidebar={props.setSidebar}
+        sidebar={props.sidebar}
+        user={props.user}
+        auth={props.auth}
+        loading={props.loading}
+        profile={props.profile}
+      />,
+      div
+    );
+  };
+
+  // Use testPropCombinations to test each combination
+  testPropCombinations(propCombs, callback);
 });

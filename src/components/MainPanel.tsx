@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
 import { User } from "@auth0/auth0-react";
+import { Profile } from "../interfaces";
 
 // Create styled components for the navbar (emotion.js)
 const Main = styled.div`
@@ -49,6 +50,8 @@ function MainPanel(props: {
   user: User | undefined;
   auth: boolean;
   loading: boolean;
+  socket: any;
+  profile: Profile | undefined;
 }) {
   // Return jsx output for this component
   return (
@@ -57,7 +60,9 @@ function MainPanel(props: {
         {/* If logged in: */}
         {props.auth && props.user && !props.loading && (
           <VertFlex>
-            <H1>Hello {props.user.name} "{props.user.picture}"!</H1>
+            <H1>
+              Hello {props.user.name}!
+            </H1>
             <LogoutButton className="new-line" />
           </VertFlex>
         )}

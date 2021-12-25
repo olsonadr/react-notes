@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { FaBars } from "react-icons/fa";
 import logo from '../img/small_logo.png'
 import { User } from "@auth0/auth0-react";
-// import logo from './img/logo.png'
+import { Profile } from "../interfaces";
 
 // Create styled components for the navbar (emotion.js)
 const Nav = styled.nav`
@@ -60,6 +60,7 @@ function Navbar(props: {
   user: User | undefined;
   auth: boolean;
   loading: boolean;
+  profile: Profile | undefined;
 }) {
   // Create wrapper to toggle sidebar using setState passed in props
   function toggleSidebar() {

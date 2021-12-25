@@ -1,9 +1,51 @@
-// Imports
+// ----------------------------------------------------------------------
+// General Setup
+// ----------------------------------------------------------------------
+
+// General Requires
 const express = require("express");
 const path = require("path");
 const app = express();
-const { Pool } = require("pg");
+
+
+// ----------------------------------------------------------------------
+// Static Serving of React App
+// ----------------------------------------------------------------------
+
+// Get environment variables from .env file 
 require('dotenv').config();
+
+// Static serving
+app.use(express.static(path.join(__dirname, "build")));
+
+// // Index route to compiled website
+// app.get("/", function (req, res) {
+//     res.sendFile(path.join(__dirname, "build", "index.html"));
+// });
+
+// Listen for static requests to render react
+const REACT_PORT = process.env.PORT || process.env.SERVER_PORT || 3000;
+// app.listen(REACT_PORT, () => {
+//     console.log(`Listening for react app rendering on port ${REACT_PORT}`);
+// });
+
+
+// ----------------------------------------------------------------------
+// Socket.io Backend
+// ----------------------------------------------------------------------
+
+// Socket.io Requires
+const SOCK_PORT = process.env.REACT_APP_SOCK_PORT || process.env.SOCK_SERVER_PORT || 4000;
+const http = require("http").createServer(app);
+const io = require("socket.io")(http, {
+    // cors: { methods: ["GET", "POST"] }, // needed when not using websocket
+});
+
+// PostgreSQL Requires
+const { Pool } = require("pg");
+
+// Get psql helper to get user's data given Auth0 values (name, email, picture)
+const { checkNewUser } = require(path.join(__dirname, "server_src/auth_checkNewUser.ts"));
 
 // Setup postgresql connection pool
 const pool = new Pool({
@@ -19,82 +61,30 @@ pool.on('error', (err, client) => {
     console.error('PSQL Error: ', err);
 });
 
-// Function to check for new users, sign them up as needed, and return their info
-// const checkNewUser = async (email:string, name:string, picture:string) => {
-const checkNewUser = async (email, name, picture) => {
-    // Check if user is new to the server
-    const client = await pool.connect();
-    let res;
-    try {
-        const selquery = `SELECT id FROM users WHERE email = '${email}';`;
-        res = await client.query(selquery);
-    } catch (err) {
-        console.error(err.stack);
-        client.end();
-        return; // redirect to error page
-    }
-    
-    // Get id if found
-    let id = undefined;
-    if (res && res.rowCount > 0) id = res.rows[0].id;
+// Handler for connected socket.io clients
+io.on('connection', (socket) => {
+    // Handle new client connection here
+    (() => { })(); // do nothing placeholder
 
-    // If res.rowCount is 0 (id not found), this is new user, add to table
-    if (res && res.rowCount === 0) {
-        res = undefined;
-        try {
-            const insquery = `INSERT INTO users(email, name, picture) VALUES('${email}', '${name}', '${picture}') RETURNING id;`;
-            res = await client.query(insquery);
-        } catch (err) {
-            console.error(err.stack);
-            client.end();
-            return; // redirect to error page
+    // Handler for receiving user authentication message
+    socket.on('profile_request', (msg) => {
+        // Handle auth message here (if payload given)
+        if (msg && msg.email && msg.name && msg.user_id) {
+            let picture = msg.picture ? msg.picture : "https://i.ibb.co/k4zLTbW/176-1760995-png-file-svg-user-icon-free-copyright-transparent.jpg";
+            checkNewUser(msg.email, msg.name, picture, msg.user_id, pool)
+                .then((data) => {
+                    socket.emit('profile_response', data);
+                });
         }
-
-        // Use id
-        if (res && res.rowCount > 0) id = res.rows[0].id;
-    }
-    
-    // // Query for all profile information given id
-    let data = undefined;
-    try {
-        const sel2query = `SELECT * FROM users WHERE id=${id};`;
-        res = await client.query(sel2query);
-        if (res && res.rowCount > 0) data = res.rows[0];
-    } catch (err) {
-        console.error(err.stack);
-        client.end();
-        return; // redirect to error page
-    }
-
-    // Close client connection
-    client.end();
-
-    // Return result (object filled with user info)
-    return data;
-};
-
-// Static serving
-app.use(express.static(path.join(__dirname, "build")));
-
-// Auth route (handle user signup and login)
-app.get("/auth", function (req, res) {
-    let email = 'manlylvrby@gmail.com';
-    let name = 'Nick Olson';
-    let picture = 'https://lh3.googleusercontent.com/a-/AOh14GhE2iifMP8RZC5cGP1SWFG3Qhi-9u3DnMfirUnD=s96-c';
-
-    checkNewUser(email, name, picture).then( (data) => {
-        console.log(data);
     });
 
-    res.sendFile(path.join(__dirname, "build", "index.html"));
+    // Handler for disconnecting socket.io client
+    socket.on('disconnect', () => {
+        // Handle client disconnect here
+        (() => { })(); // do nothing placeholder
+    });
 });
 
-// Index route to compiled website
-app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
-});
-
-// Listen for requests
-const PORT = process.env.PORT || process.env.SERVER_PORT || 4000;
-app.listen(PORT);
-console.log(`Listening on port ${PORT}`);
+// Listen for socket.io requests to backend
+io.listen(SOCK_PORT, () => { });
+console.log(`Listening for socket communication on port ${SOCK_PORT}`);
