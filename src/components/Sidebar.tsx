@@ -15,8 +15,10 @@ const Side = styled.div`
   padding: var(--sidebar-padding);
   width: var(--sidebar-width);
   overflow: scroll;
+  border-right: var(--border);
+  border-top: var(--border);
   /* hide sidebar by default w/ transition */
-  left: calc(-1*var(--sidebar-width));
+  left: calc(-1 * var(--sidebar-width));
   transition-property: left;
   transition-duration: var(--sidebar-out-time);
   /* if active, show the sidebar w/ transition */
