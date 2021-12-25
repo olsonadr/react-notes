@@ -61,7 +61,7 @@ function MainPanel(props: {
         {props.auth && props.user && !props.loading && (
           <VertFlex>
             <H1>
-              Hello {props.user.name}!
+              Hello, {props.user.name}!
             </H1>
             <LogoutButton className="new-line" />
           </VertFlex>

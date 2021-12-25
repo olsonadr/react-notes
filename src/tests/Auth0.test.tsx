@@ -42,7 +42,7 @@ test("Login displayed and Logout not displayed before login after initial load",
   mockUser = undefined;
 
   render(<App />);
-  expect(screen.getByText("Welcome! Please login or signup!")).toBeTruthy();
+  expect(screen.getByText("Welcome to react_notes! Please login or signup!")).toBeTruthy();
   expect(screen.getByText("Login")).toBeTruthy();
   expect(screen.queryByText("Logout")).toBeFalsy();
 });
@@ -62,7 +62,7 @@ test("Logout displayed and Login not displayed after login", () => {
   mockUser = dummyUser;
 
   render(<App />);
-  expect(screen.getByText(`Hello ${dummyUser.name}!`)).toBeTruthy();
+  expect(screen.getByText(`Hello, ${dummyUser.name}!`)).toBeTruthy();
   expect(screen.getByText("Logout")).toBeTruthy();
   expect(screen.queryByText("Login")).toBeFalsy();
 });
