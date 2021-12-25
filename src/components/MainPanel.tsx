@@ -69,7 +69,7 @@ function MainPanel(props: {
         {/* If logged out: */}
         {!props.auth && !props.loading && (
           <VertFlex>
-            <H1>Welcome! Please login or signup!</H1>
+            <H1>Welcome to react_notes! Please login or signup!</H1>
             <LoginButton className="new-line" />
           </VertFlex>
         )}
