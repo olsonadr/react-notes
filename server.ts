@@ -43,10 +43,8 @@ const { checkNewUser } = require(path.join(__dirname, "server_src/auth_checkNewU
 
 // Setup postgresql connection pool
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    connectionString: process.env.DATABASE_URL || process.env.DATABASE_URL_DEV,
+    ssl: process.env.DATABASE_URL ? true : false
 });
 
 // Setup postgresql pool error handling
@@ -62,14 +60,14 @@ io.on('connection', (socket) => {
     // Handler for receiving user authentication message
     socket.on('profile_request', (msg) => {
         // Handle auth message here (if payload given)
-        // console.log('Received profile request...');
+        console.log('Received profile request;');
         if (msg && msg.email && msg.name && msg.user_id) {
-            // console.log(` for auth'd user ${msg.name} w/ supposed id ${msg.user_id}, checking if they are in the users database...`);
+            console.log(` for auth'd user ${msg.name} w/ supposed id ${msg.user_id}, checking if they are in the users database;`);
             let picture = msg.picture ? msg.picture : "https://i.ibb.co/k4zLTbW/176-1760995-png-file-svg-user-icon-free-copyright-transparent.jpg";
             checkNewUser(msg.email, msg.name, picture, msg.user_id, pool)
                 .then((data) => {
-                        // if (data) console.log(` they belong in database, sending profile response to them!\n`);
-                        // else console.log(` they don't belong in database, sending them no data!\n`);
+                        if (data) console.log(` they belong in database, sending profile response to them!\n`);
+                        else console.log(` they don't belong in database, sending them no data!\n`);
                         socket.emit('profile_response', data);
                     });
         }

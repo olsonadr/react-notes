@@ -34,10 +34,11 @@ function App() {
       ? "react-notes-nerd.herokuapp.com"
       : `http://localhost:${process.env.REACT_APP_PORT}`;
 
-    console.log(`Trying to connect on ${process.env.REACT_APP_PORT}`);
+    console.log(`Trying to connect to ${window.location.host}`);
     const newSocket = io(
-      URL,
+      //  URL,
       // `http://${window.location.hostname}:${process.env.REACT_APP_PORT}`,
+      `${window.location.host}`,
       {
         reconnectionDelay: 1000,
         reconnection: true,
