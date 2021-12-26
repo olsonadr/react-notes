@@ -11,6 +11,12 @@ test("MainPanel renders without exception", () => {
   const loadingOpt = [true, false];
   const socketOpt = [undefined];
   const profileOpt = [undefined];
+  const noteOpt = [
+    undefined,
+    { loaded: false, data: "" },
+    { loaded: false, data: "data" },
+    { loaded: true, data: "data" },
+  ];
   const propCombs = {
     setSidebar: setSidebarOpt,
     sidebar: sidebarOpt,
@@ -19,8 +25,9 @@ test("MainPanel renders without exception", () => {
     loading: loadingOpt,
     socket: socketOpt,
     profile: profileOpt,
+    note: noteOpt,
   };
-  
+
   // Setup callback to test each combinatio
   const callback = (props: { [key: string]: any }) => {
     const div = document.createElement("div");
@@ -33,6 +40,7 @@ test("MainPanel renders without exception", () => {
         loading={props.loading}
         socket={props.socket}
         profile={props.profile}
+        note={props.noteOpt}
       />,
       div
     );

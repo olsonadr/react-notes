@@ -14,6 +14,24 @@ const Butt = styled.button`
   &.new-line {
     white-space: pre-line;
   }
+  /* Hover background if requested */
+  &.hover-on:hover {
+    background-color: var(--bg-bolder);
+    color: var(--bg-text-bold);
+  }
+  /* Transition background color if requested */
+  &.transition-bg {
+    transition: background-color var(--speed) ease-in,
+      color var(--speed) ease-in;
+  }
+  /* Use dropdown dimensions if requested */
+  &.nav-dd-style {
+    height: var(--nav-dd-button-height);
+    height: var(--nav-button-size);
+    padding: var(--nav-dd-button-padding);
+    margin-top: 0.5rem;
+    width: 100%;
+  }
 `;
 
 // Setup props of LoginButton (enabling default vals)

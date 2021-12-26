@@ -7,6 +7,7 @@
 
   --bg: rgb(44, 42, 54);
   --bg-bold: rgb(62, 59, 75);
+  --bg-bolder: rgb(73, 70, 90);
   --bg-text: rgb(224, 224, 224);
   --bg-text-bold: rgb(255, 255, 255);
   --fg: rgb(224, 224, 224);
@@ -17,6 +18,8 @@
   --nav-height: 5rem;
   --nav-button-ratio: 0.6;
   --nav-button-size: calc(var(--nav-button-ratio)*var(--nav-height));
+  --nav-dd-button-height: 40px;
+  --nav-dd-button-padding: 0.5rem;
   --sidebar-width: 250px;
   --sidebar-padding: 5px;
   --sidebar-in-time: 400ms;

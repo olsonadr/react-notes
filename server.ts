@@ -100,7 +100,7 @@ if (process.env.SEPARATE_PROCESSES === 'true') {
 } else {
     // Renders static, built react app and listens for socket comms on same express server
     //  (requires `npm run build` before usage)
-http.listen(PORT, () => {
-    console.log(`Listening for react and socket requests on port ${PORT}\n`);
-});
+    http.listen(PORT, () => {
+        console.log(`Listening for react and socket requests on port ${PORT}\n`);
+    });
 }
