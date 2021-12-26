@@ -57,7 +57,9 @@ pool.on('error', (err, client) => {
 // Handler for connected socket.io clients
 io.on('connection', (socket) => {
     // Handle new client connection here
-    (() => { })(); // do nothing placeholder
+    console.log('Client connected, sending confirmation')
+    socket.emit('connected', {});
+    // (() => { })(); // do nothing placeholder
 
     // Handler for receiving user authentication message
     socket.on('profile_request', (msg) => {
