@@ -5,6 +5,13 @@ This is a simple note-taking app that is planned to allow each logged-in user to
 ## Required Environment Variables
  - **REACT_APP_AUTH0_DOMAIN** = the Domain for the Auth0 application
  - **REACT_APP_AUTH0_CLIENT_ID** = the Client ID for the Auth0 application
+ - **REACT_APP_SOCK_PORT** = the port on which the Socket.io demon can be reached on
+ - **PSQL_DB** = the database name of the PostgreSQL user database
+ - **PSQL_HOST** = the host name of the PostgreSQL user database
+ - **PSQL_USER** = the user used to connect to the PostgreSQL user database
+ - **PSQL_PASS** = the password used to connect to the PostgreSQL user database
+ - **PSQL_PORT** = the port of the PostgreSQL user database
+ - **SERVER_PORT** = the port on which the static react app is hosted
 
 ## Available Scripts
 
