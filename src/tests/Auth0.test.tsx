@@ -1,8 +1,6 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { render, screen } from "@testing-library/react";
 import App from "../App";
-import { useAuth0 } from "@auth0/auth0-react";
 
 // Mock useAuth0 hook for these tests depending on variables
 const dummyUser = {
