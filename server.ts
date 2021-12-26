@@ -36,6 +36,9 @@ const { checkNewUser } = require(path.join(__dirname, "server_src/auth_checkNewU
 // Setup postgresql connection pool
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
 // Setup postgresql pool error handling
@@ -51,10 +54,12 @@ io.on('connection', (socket) => {
     // Handler for receiving user authentication message
     socket.on('profile_request', (msg) => {
         // Handle auth message here (if payload given)
+        console.log('Received profile request!');
         if (msg && msg.email && msg.name && msg.user_id) {
             let picture = msg.picture ? msg.picture : "https://i.ibb.co/k4zLTbW/176-1760995-png-file-svg-user-icon-free-copyright-transparent.jpg";
             checkNewUser(msg.email, msg.name, picture, msg.user_id, pool)
             .then((data) => {
+                    console.log('Sending profile response!');
                     socket.emit('profile_response', data);
                 });
             }
@@ -69,6 +74,7 @@ io.on('connection', (socket) => {
 
 // Listen for socket.io and react requests on same port
 const PORT = process.env.PORT || process.env.REACT_APP_PORT || 3000;
+// io.listen(PORT, () => {
 http.listen(PORT, () => {
-    console.log(`Listening for socket communication on port ${PORT}`);
 });
+console.log(`Listening for react and socket requests on port ${PORT}`);

@@ -29,6 +29,7 @@ function App() {
   // useEffect hook to handle socket opening, init messages, and cleanup closing
   useEffect(() => {
     // Create new connection
+    console.log(`Trying to connect on ${process.env.REACT_APP_PORT}`);
     const newSocket = io(
       `http://${window.location.hostname}:${process.env.REACT_APP_PORT}`,
       {
@@ -55,6 +56,7 @@ function App() {
     if (socket) {
       // If authenticated, request profile information
       if (user && isAuthenticated) {
+        console.log('Sending profile request!');
         socket.emit("profile_request", {
           email: user.email,
           name: user.name,
@@ -64,6 +66,7 @@ function App() {
       }
       // Auth confirmation with profile information
       socket.on("profile_response", (msg:Profile) => {
+        console.log('Received profile response!');
         setProfile(msg);
       });
     }

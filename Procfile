@@ -1,1 +1,1 @@
-web: npm run express
+web: export REACT_APP_PORT=3000 && npm run express-nodemon && unset REACT_APP_PORT
