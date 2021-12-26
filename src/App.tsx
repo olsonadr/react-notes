@@ -22,16 +22,23 @@ const AppComp = styled.div`
 function App() {
   // States of App
   const [sidebar, setSidebar] = useState(false);
-  const [socket, setSocket] = useState<any>(undefined);
+  const [[socket], setSocket] = useState<any>([undefined]);
+  const [connected, setConnected] = useState<boolean>(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
 
   // useEffect hook to handle socket opening, init messages, and cleanup closing
   useEffect(() => {
     // Create new connection
-    console.log(`Trying to connect to ${window.location.host}`);
+    const URL = process.env.REACT_APP_DEV_PORT
+    ? `:${process.env.REACT_APP_DEV_PORT}/`
+    : `${window.location.host}`;
+    // ? `${window.location.hostname}:${process.env.REACT_APP_PORT}`
+    // const URL = `${window.location.hostname}:5000/api`;
+    // const URL = `/`;
+    console.log(`Trying to connect to ${URL}`);
     const newSocket = io(
-      `${window.location.host}`,
+      URL,
       {
         reconnectionDelay: 1000,
         reconnection: true,
@@ -41,7 +48,7 @@ function App() {
         rejectUnauthorized: false,
       }
     );
-    setSocket(newSocket);
+    setSocket([newSocket]);
 
     // Cleanup callback
     return () => {
@@ -54,9 +61,9 @@ function App() {
   useEffect(() => {
     // Socket profile request message handlers
     if (socket) {
-      // If authenticated, request profile information
-      if (user && isAuthenticated) {
-        console.log('Sending profile request!');
+      // If connected and authenticated, request profile information
+      if (connected === true && user && isAuthenticated) {
+        console.log("Sending profile request!");
         socket.emit("profile_request", {
           email: user.email,
           name: user.name,
@@ -65,15 +72,20 @@ function App() {
         });
       }
       // Auth confirmation with profile information
-      socket.on("profile_response", (msg:Profile) => {
-        console.log('Received profile response!');
+      socket.on("connected", () => {
+        console.log("Connected to backend!");
+        setConnected(true);
+      });
+      // Auth confirmation with profile information
+      socket.on("profile_response", (msg: Profile) => {
+        console.log("Received profile response!");
         setProfile(msg);
       });
     }
 
     // Return no cleanup
     return ()=>{return;};
-  }, [user, isAuthenticated, socket]);
+  }, [user, isAuthenticated, socket, connected]);
 
   // Return App component jsx
   return (
