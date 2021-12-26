@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { useAuth0 } from "@auth0/auth0-react";
 import io from "socket.io-client";
@@ -26,28 +26,27 @@ function App() {
   const [connected, setConnected] = useState<boolean>(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const profileRequestSent = useRef(false);
+  const retrySocket = useRef(false);
 
   // useEffect hook to handle socket opening, init messages, and cleanup closing
   useEffect(() => {
     // Create new connection
     const URL = process.env.REACT_APP_DEV_PORT
-    ? `:${process.env.REACT_APP_DEV_PORT}/`
-    : `${window.location.host}`;
+      ? `:${process.env.REACT_APP_DEV_PORT}/`
+      : `${window.location.host}`;
     // ? `${window.location.hostname}:${process.env.REACT_APP_PORT}`
     // const URL = `${window.location.hostname}:5000/api`;
     // const URL = `/`;
     console.log(`Trying to connect to ${URL}`);
-    const newSocket = io(
-      URL,
-      {
-        reconnectionDelay: 1000,
-        reconnection: true,
-        transports: ["websocket"],
-        agent: false,
-        upgrade: false,
-        rejectUnauthorized: false,
-      }
-    );
+    const newSocket = io(URL, {
+      reconnectionDelay: 1000,
+      reconnection: true,
+      transports: ["websocket"],
+      agent: false,
+      upgrade: false,
+      rejectUnauthorized: false,
+    });
     setSocket([newSocket]);
 
     // Cleanup callback
@@ -59,10 +58,18 @@ function App() {
 
   // useEffect hook to send profile requests on user and isAuthenticated updates
   useEffect(() => {
+    // Reset retry prompter
+    retrySocket.current = false;
+    
     // Socket profile request message handlers
     if (socket) {
       // If connected and authenticated, request profile information
-      if (connected === true && user && isAuthenticated) {
+      if (
+        connected === true &&
+        user &&
+        isAuthenticated &&
+        !profileRequestSent.current
+      ) {
         console.log("Sending profile request!");
         socket.emit("profile_request", {
           email: user.email,
@@ -70,22 +77,31 @@ function App() {
           picture: user.picture,
           user_id: user.sub,
         });
+        profileRequestSent.current = true;
       }
       // Auth confirmation with profile information
       socket.on("connected", () => {
         console.log("Connected to backend!");
         setConnected(true);
+        if (profileRequestSent.current === true) {
+          profileRequestSent.current = false;
+          retrySocket.current = true;
+        }
       });
       // Auth confirmation with profile information
       socket.on("profile_response", (msg: Profile) => {
         console.log("Received profile response!");
         setProfile(msg);
       });
+      // If disconnected, reset profileRequestSent
+      profileRequestSent.current = false;
     }
 
     // Return no cleanup
-    return ()=>{return;};
-  }, [user, isAuthenticated, socket, connected]);
+    return () => {
+      return;
+    };
+  }, [user, isAuthenticated, socket, connected, profileRequestSent, retrySocket]);
 
   // Return App component jsx
   return (
@@ -114,6 +130,10 @@ function App() {
         loading={isLoading}
         socket={socket}
         profile={profile}
+        // note={{loaded:false, data:""}}
+        // note={{loaded:false, data:"data"}}
+        // note={{loaded:true, data:""}}
+        note={{ loaded: true, data: "data" }}
       />
     </AppComp>
   );
