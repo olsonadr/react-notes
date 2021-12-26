@@ -18,28 +18,14 @@ require('dotenv').config();
 // Static serving
 app.use(express.static(path.join(__dirname, "build")));
 
-// // Index route to compiled website
-// app.get("/", function (req, res) {
-//     res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
-
-// Listen for static requests to render react
-const REACT_PORT = process.env.PORT || process.env.SERVER_PORT || 3000;
-app.listen(REACT_PORT, () => {
-    console.log(`Listening for react app rendering on port ${REACT_PORT}`);
-});
-
 
 // ----------------------------------------------------------------------
 // Socket.io Backend
 // ----------------------------------------------------------------------
 
 // Socket.io Requires
-const SOCK_PORT = process.env.REACT_APP_SOCK_PORT || process.env.SOCK_SERVER_PORT || 4000;
 const http = require("http").createServer(app);
-const io = require("socket.io")(http, {
-    // cors: { methods: ["GET", "POST"] }, // needed when not using websocket
-});
+const io = require("socket.io")(http, {});
 
 // PostgreSQL Requires
 const { Pool } = require("pg");
@@ -50,17 +36,7 @@ const { checkNewUser } = require(path.join(__dirname, "server_src/auth_checkNewU
 // Setup postgresql connection pool
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    // ssl: {
-    //     rejectUnauthorized: false
-    // }
 });
-// const pool = new Pool({
-//     user: process.env.PSQL_USER,
-//     host: process.env.PSQL_HOST,
-//     database: process.env.PSQL_DB,
-//     password: process.env.PSQL_PASS,
-//     port: process.env.PSQL_PORT,
-// });
 
 // Setup postgresql pool error handling
 pool.on('error', (err, client) => {
@@ -81,16 +57,18 @@ io.on('connection', (socket) => {
             .then((data) => {
                     socket.emit('profile_response', data);
                 });
-        }
-    });
-
-    // Handler for disconnecting socket.io client
-    socket.on('disconnect', () => {
-        // Handle client disconnect here
+            }
+        });
+        
+        // Handler for disconnecting socket.io client
+        socket.on('disconnect', () => {
+            // Handle client disconnect here
         (() => { })(); // do nothing placeholder
     });
 });
 
-// Listen for socket.io requests to backend
-io.listen(SOCK_PORT, () => { });
-console.log(`Listening for socket communication on port ${SOCK_PORT}`);
+// Listen for socket.io and react requests on same port
+const PORT = process.env.PORT || process.env.REACT_APP_PORT || 3000;
+http.listen(PORT, () => {
+    console.log(`Listening for socket communication on port ${PORT}`);
+});

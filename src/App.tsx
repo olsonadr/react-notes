@@ -30,7 +30,7 @@ function App() {
   useEffect(() => {
     // Create new connection
     const newSocket = io(
-      `http://${window.location.hostname}:${process.env.REACT_APP_SOCK_PORT}`,
+      `http://${window.location.hostname}:${process.env.REACT_APP_PORT}`,
       {
         reconnectionDelay: 1000,
         reconnection: true,
