@@ -1,10 +1,10 @@
 // Dropdown inspired by: https://www.youtube.com/watch?v=IF6k0uZuypA&list=WL&index=3
 // Icons
-import { ReactComponent as CaretIcon } from "../icons/caret.svg";
 import { ReactComponent as CogIcon } from "../icons/cog.svg";
 import { ReactComponent as ChevronIcon } from "../icons/chevron.svg";
 import { ReactComponent as ArrowIcon } from "../icons/arrow.svg";
-import { ReactComponent as BoltIcon } from "../icons/bolt.svg";
+// import { ReactComponent as CaretIcon } from "../icons/caret.svg";
+// import { ReactComponent as BoltIcon } from "../icons/bolt.svg";
 
 // Normal Imports
 import React, { useEffect, useState } from "react";
@@ -64,10 +64,19 @@ const NavImg = styled.img`
 `;
 
 const NavItemS = styled(NavItem)`
-  width: calc(0.8 * var(--nav-height));
+  height: var(--nav-button-size);
+  width: var(--nav-button-size);
+  /* width: 60px; */
   display: flex;
   align-items: center;
   justify-content: center;
+  & img {
+    font-size: 10px;
+    border-radius: 50%;
+    height: var(--nav-button-size);
+    width: var(--nav-button-size);
+    border: var(--border);
+  }
 `;
 
 // Exported Navbar react component
@@ -84,6 +93,15 @@ function Navbar(props: {
     props.setSidebar(!props.sidebar);
   }
 
+  // The icon to use for the dropdown button
+  const dropdownIcon =
+    props.profile && props.profile.picture ? (
+      // props.profile && props.profile.picture ? (
+      <img src={props.profile.picture} alt="Dropdown Button" />
+    ) : (
+      <BsPersonCircle />
+    );
+
   return (
     <>
       <Nav>
@@ -94,7 +112,7 @@ function Navbar(props: {
           <NavImg src={logo} alt="React Notes" />
         </NavCenter>
         <NavRight>
-          <NavItemS className="hover-on" icon={<BsPersonCircle />}>
+          <NavItemS className="hover-on" icon={dropdownIcon}>
             <DropdownMenu></DropdownMenu>
           </NavItemS>
         </NavRight>
@@ -107,10 +125,8 @@ function Navbar(props: {
 const IconButton = styled.button`
   --button-size: calc(0.5 * var(--nav-height));
   font-size: 1.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
-  /* width: var(--button-size);
-  height: var(--button-size); */
+  height: var(--button-size);
+  width: var(--button-size);
   background-color: var(--bg-bold);
   /* background-color: var(--bg); */
   border-radius: 50%;
@@ -122,9 +138,6 @@ const IconButton = styled.button`
   /* border: var(--border); */
   border: none;
   cursor: pointer;
-  &.hover-on {
-    width: 2.5rem;
-  }
   &.hover-on:hover {
     background-color: var(--bg-bold);
     filter: brightness(1.1);
@@ -188,11 +201,12 @@ function NavItem(props: {
 // z=[10,19], so should be in front of content (z=[0,9])
 //  but in front of other popups (z=[20,29]);
 const DropdownS = styled.div`
+  --ratio: calc(var(--nav-button-ratio) + 0.15);
+  top: calc(var(--ratio) * var(--nav-height));
+  right: 0;
   background-color: var(--bg);
   position: absolute;
-  top: calc(0.65 * var(--nav-height));
   width: var(--dropdown-width);
-  transform: translateX(-85%);
   border: var(--border);
   border-radius: var(--border-radius);
   padding: var(--dropdown-padding);
@@ -208,10 +222,9 @@ const DropdownWrapperS = styled.div`
   &::after {
     position: absolute;
     left: auto;
-    right: 14px;
-    top: calc(0.65 * var(--nav-height) - 8px);
-    /* right: 15px; */
-    /* top: -8px; */
+    --ratio: calc(var(--nav-button-ratio) + 0.15);
+    top: calc(var(--ratio) * var(--nav-height) - 8px);
+    right: calc(0.5 * var(--nav-button-size) - 6px);
     content: "";
     background-clip: padding-box;
     padding: 7px;
@@ -297,21 +310,29 @@ function DropdownMenu(props: {
 }) {
   // Establish state for which submenu is open
   const [activeMenu, setActiveMenu] = useState("main");
-  
+
   // Establish state for menu height for animations
   // const [menuHeight, setMenuHeight] = useState<string | number | null>(null);
-  const [menuHeight, setMenuHeight] = useState<string | number | undefined>(undefined);
-  
+  const [menuHeight, setMenuHeight] = useState<string | number | undefined>(
+    undefined
+  );
+
   // Establish nodeRef for CSSTransition
   const nodeRefMain: React.MutableRefObject<any> = React.useRef(null);
   const nodeRefSettings: React.MutableRefObject<any> = React.useRef(null);
-  
+
   // Establish function to get the current menuHeight
   function calcHeight() {
     let height = undefined;
     let currRef;
-    currRef = activeMenu === "main" && nodeRefMain && nodeRefMain.current ? nodeRefMain.current : currRef;
-    currRef = activeMenu === "settings" && nodeRefSettings && nodeRefSettings.current ? nodeRefSettings.current : currRef;
+    currRef =
+      activeMenu === "main" && nodeRefMain && nodeRefMain.current
+        ? nodeRefMain.current
+        : currRef;
+    currRef =
+      activeMenu === "settings" && nodeRefSettings && nodeRefSettings.current
+        ? nodeRefSettings.current
+        : currRef;
     height = currRef ? currRef.offsetHeight : height;
     setMenuHeight(height);
   }

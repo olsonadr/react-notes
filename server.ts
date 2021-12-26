@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
         if (msg && msg.email && msg.name && msg.user_id) {
             let picture = msg.picture ? msg.picture : "https://i.ibb.co/k4zLTbW/176-1760995-png-file-svg-user-icon-free-copyright-transparent.jpg";
             checkNewUser(msg.email, msg.name, picture, msg.user_id, pool)
-                .then((data) => {
+            .then((data) => {
                     socket.emit('profile_response', data);
                 });
         }
