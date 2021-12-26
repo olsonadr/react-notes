@@ -24,7 +24,9 @@ app.use(express.static(path.join(__dirname, "build")));
 // ----------------------------------------------------------------------
 
 // Socket.io Requires
-const PORT = process.env.PORT || process.env.REACT_APP_PORT || 3000;
+const PORT = (process.env.SEPARATE_PROCESSES ? process.env.SERVER_DEV_PORT : undefined)
+    || process.env.PORT
+    || 3000;
 const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
     cors: {
@@ -85,6 +87,15 @@ io.on('connection', (socket) => {
 });
 
 // Listen for socket.io and react requests on same port
+if (process.env.SEPARATE_PROCESSES === 'true') {
+    // Listens for socket comms on express server
+    //  (requires static serving of react app via other means like `npm start`)
+    io.listen(PORT, () => { });
+    console.log(`Listening for socket requests on port ${PORT}\n`);
+} else {
+    // Renders static, built react app and listens for socket comms on same express server
+    //  (requires `npm run build` before usage)
 http.listen(PORT, () => {
     console.log(`Listening for react and socket requests on port ${PORT}\n`);
 });
+}

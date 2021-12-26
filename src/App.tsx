@@ -30,9 +30,15 @@ function App() {
   // useEffect hook to handle socket opening, init messages, and cleanup closing
   useEffect(() => {
     // Create new connection
+    const URL = process.env.REACT_APP_DEV_PORT
+    ? `:${process.env.REACT_APP_DEV_PORT}/`
+    : `${window.location.host}`;
+    // ? `${window.location.hostname}:${process.env.REACT_APP_PORT}`
+    // const URL = `${window.location.hostname}:5000/api`;
+    // const URL = `/`;
     console.log(`Trying to connect to ${URL}`);
     const newSocket = io(
-      `${window.location.host}`,
+      URL,
       {
         reconnectionDelay: 1000,
         reconnection: true,
