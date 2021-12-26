@@ -25,9 +25,9 @@ app.use(express.static(path.join(__dirname, "build")));
 
 // Listen for static requests to render react
 const REACT_PORT = process.env.PORT || process.env.SERVER_PORT || 3000;
-// app.listen(REACT_PORT, () => {
-//     console.log(`Listening for react app rendering on port ${REACT_PORT}`);
-// });
+app.listen(REACT_PORT, () => {
+    console.log(`Listening for react app rendering on port ${REACT_PORT}`);
+});
 
 
 // ----------------------------------------------------------------------
