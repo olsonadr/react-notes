@@ -24,7 +24,7 @@
   --dropdown-width: 270px;
   --dropdown-padding: 1rem;
 
-  --border: 1px solid #474a4d;
+  --border: 1px solid var(--bg-bold);
   --border-radius: 8px;
   --speed: 200ms;
 }

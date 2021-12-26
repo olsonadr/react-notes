@@ -66,7 +66,6 @@ const NavImg = styled.img`
 const NavItemS = styled(NavItem)`
   height: var(--nav-button-size);
   width: var(--nav-button-size);
-  /* width: 60px; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,14 +127,12 @@ const IconButton = styled.button`
   height: var(--button-size);
   width: var(--button-size);
   background-color: var(--bg-bold);
-  /* background-color: var(--bg); */
   border-radius: 50%;
   padding: 5px;
   margin: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* border: var(--border); */
   border: none;
   cursor: pointer;
   &.hover-on:hover {
@@ -201,7 +198,7 @@ function NavItem(props: {
 // z=[10,19], so should be in front of content (z=[0,9])
 //  but in front of other popups (z=[20,29]);
 const DropdownS = styled.div`
-  --ratio: calc(var(--nav-button-ratio) + 0.15);
+  --ratio: calc(var(--nav-button-ratio) + 0.165);
   top: calc(var(--ratio) * var(--nav-height));
   right: 0;
   background-color: var(--bg);
@@ -223,13 +220,12 @@ const DropdownWrapperS = styled.div`
     position: absolute;
     left: auto;
     --ratio: calc(var(--nav-button-ratio) + 0.15);
-    top: calc(var(--ratio) * var(--nav-height) - 8px);
-    right: calc(0.5 * var(--nav-button-size) - 6px);
+    top: calc(var(--ratio) * var(--nav-height) - 6px);
+    right: calc(0.5 * var(--nav-button-size) - 5px);
     content: "";
-    background-clip: padding-box;
+    /* background-clip: padding-box; */
     padding: 7px;
     transform: rotate(45deg);
-    box-shadow: -9px 0 7pba (27, 31, 35, 0.6);
     z-index: 12;
 
     background-color: var(--bg);
