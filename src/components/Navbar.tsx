@@ -15,6 +15,8 @@ import { BsPersonCircle } from "react-icons/bs";
 import logo from "../img/small_logo.png";
 import { User } from "@auth0/auth0-react";
 import { Profile } from "../interfaces";
+import LoginButton from "./LoginButton";
+import LogoutButton from "./LogoutButton";
 
 // Create styled components for the Navbar (emotion.js)
 const Nav = styled.nav`
@@ -114,6 +116,9 @@ function Navbar(props: {
       <BsPersonCircle />
     );
 
+  // Whether we are logged in state for children
+  const loggedIn:boolean = props.auth && props.user && !props.loading ? true : false;
+
   return (
     <>
       <Nav>
@@ -125,7 +130,7 @@ function Navbar(props: {
         </NavCenter>
         <NavRight>
           <NavItemS className="hover-on" icon={dropdownIcon}>
-            <DropdownMenu></DropdownMenu>
+            <DropdownMenu loggedIn={loggedIn}></DropdownMenu>
           </NavItemS>
         </NavRight>
       </Nav>
@@ -295,13 +300,13 @@ const DropdownTransitionDiv = styled.div`
 // Dropdown Item Button/Container
 // const DropdownItemS = styled.button`
 const DropdownItemS = styled.div`
-  height: 40px;
+  height: var(--nav-dd-button-height);
   width: calc(var(--dropdown-width) - var(--dropdown-padding));
   display: flex;
   align-items: center;
   border-radius: var(--border-radius);
   transition: background var(--speed);
-  padding: 0.5rem;
+  padding: var(--nav-dd-button-padding);
   border: none;
   background-color: var(--bg);
   cursor: pointer;
@@ -314,6 +319,7 @@ const DropdownItemS = styled.div`
 
 // Local DropdownMenu react component
 function DropdownMenu(props: {
+  loggedIn?: boolean;
   dropdownToggle?: () => {};
   children?: JSX.Element;
 }) {
@@ -350,6 +356,13 @@ function DropdownMenu(props: {
     calcHeight();
   });
 
+  // Login/Logout button in dropdown depending on auth state
+  const LogInOutButton = props.loggedIn ? (
+      <LogoutButton className="hover-on transition-bg nav-dd-style" />
+      ) : (
+      <LoginButton className="hover-on transition-bg nav-dd-style" />
+  );
+
   // Return jsx for DropdownMenu to render
   return (
     <>
@@ -376,6 +389,7 @@ function DropdownMenu(props: {
               >
                 Settings
               </DropdownItem>
+              {LogInOutButton}
             </DropdownTransitionDiv>
           </CSSTransition>
 
