@@ -49,12 +49,18 @@ const { checkNewUser } = require(path.join(__dirname, "server_src/auth_checkNewU
 
 // Setup postgresql connection pool
 const pool = new Pool({
-    user: process.env.PSQL_USER,
-    host: process.env.PSQL_HOST,
-    database: process.env.PSQL_DB,
-    password: process.env.PSQL_PASS,
-    port: process.env.PSQL_PORT,
+    connectionString: process.env.DATABASE_URL,
+    // ssl: {
+    //     rejectUnauthorized: false
+    // }
 });
+// const pool = new Pool({
+//     user: process.env.PSQL_USER,
+//     host: process.env.PSQL_HOST,
+//     database: process.env.PSQL_DB,
+//     password: process.env.PSQL_PASS,
+//     port: process.env.PSQL_PORT,
+// });
 
 // Setup postgresql pool error handling
 pool.on('error', (err, client) => {
