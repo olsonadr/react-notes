@@ -19,6 +19,8 @@
   --sidebar-padding: 5px;
   --sidebar-in-time: 400ms;
   --sidebar-out-time: 800ms;
+  --dropdown-width: 270px;
+  --dropdown-padding: 1rem;
 
   --border: 1px solid #474a4d;
   --border-radius: 8px;
