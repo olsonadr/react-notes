@@ -16,7 +16,8 @@ const authClientId =
   process.env.REACT_APP_AUTH0_CLIENT_ID !== undefined
     ? process.env.REACT_APP_AUTH0_CLIENT_ID
     : "";
-    
+
+// Render the react app
 ReactDOM.render(
   <React.StrictMode>
     <Auth0Provider

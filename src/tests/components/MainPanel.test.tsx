@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom";
 import MainPanel from "../../components/MainPanel";
+import testPropCombinations from "../utils/testPropCombinations";
 
 test("MainPanel renders without exception", () => {
   // Setup options for each property
@@ -8,27 +9,35 @@ test("MainPanel renders without exception", () => {
   const userOpt = [undefined];
   const authOpt = [true, false];
   const loadingOpt = [true, false];
+  const socketOpt = [undefined];
+  const profileOpt = [undefined];
+  const propCombs = {
+    setSidebar: setSidebarOpt,
+    sidebar: sidebarOpt,
+    user: userOpt,
+    auth: authOpt,
+    loading: loadingOpt,
+    socket: socketOpt,
+    profile: profileOpt,
+  };
+  
+  // Setup callback to test each combinatio
+  const callback = (props: { [key: string]: any }) => {
+    const div = document.createElement("div");
+    ReactDOM.render(
+      <MainPanel
+        setSidebar={props.setSidebar}
+        sidebar={props.sidebar}
+        user={props.user}
+        auth={props.auth}
+        loading={props.loading}
+        socket={props.socket}
+        profile={props.profile}
+      />,
+      div
+    );
+  };
 
-  // Renders without error for all combinations of params
-  setSidebarOpt.forEach((setSidebar) => {
-    sidebarOpt.forEach((sidebar) => {
-      userOpt.forEach((user) => {
-        authOpt.forEach((auth) => {
-          loadingOpt.forEach((loading) => {
-            const div = document.createElement("div");
-            ReactDOM.render(
-              <MainPanel
-                setSidebar={setSidebar}
-                sidebar={sidebar}
-                user={user}
-                auth={auth}
-                loading={loading}
-              />,
-              div
-            );
-          });
-        });
-      });
-    });
-  });
+  // Use testPropCombinations to test each combination
+  testPropCombinations(propCombs, callback);
 });
