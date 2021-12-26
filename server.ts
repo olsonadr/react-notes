@@ -24,8 +24,13 @@ app.use(express.static(path.join(__dirname, "build")));
 // ----------------------------------------------------------------------
 
 // Socket.io Requires
+const PORT = process.env.PORT || process.env.REACT_APP_PORT || 3000;
 const http = require("http").createServer(app);
-const io = require("socket.io")(http, {});
+const io = require("socket.io")(http, {
+    cors: {
+        origin: [`http://localhost:${PORT}`, 'react-notes-nerd.herokuapp.com'],
+    }
+});
 
 // PostgreSQL Requires
 const { Pool } = require("pg");
@@ -73,7 +78,6 @@ io.on('connection', (socket) => {
 });
 
 // Listen for socket.io and react requests on same port
-const PORT = process.env.PORT || process.env.REACT_APP_PORT || 3000;
 // io.listen(PORT, () => {
 http.listen(PORT, () => {
 });

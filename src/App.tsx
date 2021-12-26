@@ -29,9 +29,15 @@ function App() {
   // useEffect hook to handle socket opening, init messages, and cleanup closing
   useEffect(() => {
     // Create new connection
+    const IS_PROD = process.env.NODE_ENV === "production";
+    const URL = IS_PROD
+      ? "react-notes-nerd.herokuapp.com"
+      : `http://localhost:${process.env.REACT_APP_PORT}`;
+
     console.log(`Trying to connect on ${process.env.REACT_APP_PORT}`);
     const newSocket = io(
-      `http://${window.location.hostname}:${process.env.REACT_APP_PORT}`,
+      URL,
+      // `http://${window.location.hostname}:${process.env.REACT_APP_PORT}`,
       {
         reconnectionDelay: 1000,
         reconnection: true,
