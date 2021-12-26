@@ -2,16 +2,12 @@
 
 This is a simple note-taking app that is planned to allow each logged-in user to have a tree of notes of many possible formats, all editable from within this single-page-application. It is also the project by which I am familiarizing myself with React, Emotion.js, Jest, Typescript, Auth0, and the like. This project was initially bootstrapped using the React bootstrapper with the Typescript template. 
 
-## Required Environment Variables
+## Environment Variables
  - **REACT_APP_AUTH0_DOMAIN** = the Domain for the Auth0 application
  - **REACT_APP_AUTH0_CLIENT_ID** = the Client ID for the Auth0 application
- - **REACT_APP_SOCK_PORT** = the port on which the Socket.io demon can be reached on
- - **PSQL_DB** = the database name of the PostgreSQL user database
- - **PSQL_HOST** = the host name of the PostgreSQL user database
- - **PSQL_USER** = the user used to connect to the PostgreSQL user database
- - **PSQL_PASS** = the password used to connect to the PostgreSQL user database
- - **PSQL_PORT** = the port of the PostgreSQL user database
- - **SERVER_PORT** = the port on which the static react app is hosted
+ - **PORT** = the port on which express should serve the compiled, static React app
+ - **REACT_APP_PORT** = the port on which the Socket.io demon can be reached from the client (should be same as the express serving)
+ - **DATABASE_URL_DEV** = for development, used in place of DATABASE_URL (that is set by Heroku or manually for pointing to the PostgreSQL database in production)
 
 ## Available Scripts
 
