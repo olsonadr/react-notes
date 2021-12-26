@@ -132,8 +132,8 @@ function App() {
         profile={profile}
         // note={{loaded:false, data:""}}
         // note={{loaded:false, data:"data"}}
-        // note={{loaded:true, data:""}}
-        note={{ loaded: true, data: "data" }}
+        note={{loaded:true, data:""}}
+        // note={{ loaded: true, data: "data" }}
       />
     </AppComp>
   );

@@ -102,7 +102,7 @@ function MainPanel(props: {
           !props.loading && (
             <VertFlex>
               <H1>Hello, {props.user.name}!</H1>
-              <H2>Please select or create a note!</H2>
+              <H2>Please open or create a note!</H2>
             </VertFlex>
           )}
         {/* If logged in and profile loaded, but no note selected */}
