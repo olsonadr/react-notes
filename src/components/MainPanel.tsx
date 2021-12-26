@@ -197,7 +197,8 @@ function TextEditor(props: {
     <BoxS>
       <Box m={2}>
         <Box>
-          <Paper style={{ minHeight: "144px" }}>
+          <Paper>
+          {/* <Paper style={{ minHeight: "100px" }}> */}
             <Box onClick={focusEditor} p={4}>
               <EditorContext.Provider value={editorState}>
                 <Editor
