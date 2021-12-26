@@ -119,6 +119,11 @@ function Navbar(props: {
   // Whether we are logged in state for children
   const loggedIn:boolean = props.auth && props.user && !props.loading ? true : false;
 
+  // Prevent dragging handler
+  const preventDragHandler = (e:any) => {
+    e.preventDefault();
+  };
+
   return (
     <>
       <Nav>
@@ -126,7 +131,11 @@ function Navbar(props: {
           <SidebarToggle onClick={toggleSidebar} />
         </NavLeft>
         <NavCenter>
-          <NavImg src={logo} alt="React Notes" />
+          <NavImg
+            src={logo}
+            alt="React Notes"
+            onDragStart={preventDragHandler}
+          />
         </NavCenter>
         <NavRight>
           <NavItemS className="hover-on" icon={dropdownIcon}>

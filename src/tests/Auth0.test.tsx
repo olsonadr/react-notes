@@ -31,7 +31,7 @@ test("Auth loading text initially displayed", () => {
   mockUser = undefined;
 
   render(<App />);
-  expect(screen.getByText("Loading...")).toBeTruthy();
+  expect(screen.getByText("Authenticating Session...")).toBeTruthy();
 });
 
 test("Login displayed and Logout not displayed before login after initial load", () => {
@@ -40,9 +40,9 @@ test("Login displayed and Logout not displayed before login after initial load",
   mockUser = undefined;
 
   render(<App />);
-  expect(screen.getByText("Welcome to react_notes! Please login or signup!")).toBeTruthy();
+  expect(screen.getByText("Welcome to react_notes!")).toBeTruthy();
+  expect(screen.getByText("Please login!")).toBeTruthy();
   expect(screen.getByText("Login")).toBeTruthy();
-  expect(screen.queryByText("Logout")).toBeFalsy();
 });
 
 test("Auth loading text displayed after login button press", () => {
@@ -51,16 +51,14 @@ test("Auth loading text displayed after login button press", () => {
   mockUser = dummyUser;
 
   render(<App />);
-  expect(screen.getByText("Loading...")).toBeTruthy();
+  expect(screen.getByText("Authenticating Session...")).toBeTruthy();
 });
 
-test("Logout displayed and Login not displayed after login", () => {
+test("Login not displayed after login", () => {
   mockAuth = true;
   mockLoading = false;
   mockUser = dummyUser;
 
   render(<App />);
   expect(screen.getByText(`Hello, ${dummyUser.name}!`)).toBeTruthy();
-  expect(screen.getByText("Logout")).toBeTruthy();
-  expect(screen.queryByText("Login")).toBeFalsy();
 });

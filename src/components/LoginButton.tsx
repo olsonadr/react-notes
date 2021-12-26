@@ -32,6 +32,10 @@ const Butt = styled.button`
     margin-top: 0.5rem;
     width: 100%;
   }
+  /* Use top margin if requested */
+  &.margin-top {
+    margin-top: 1rem;
+  }
 `;
 
 // Setup props of LoginButton (enabling default vals)
