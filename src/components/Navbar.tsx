@@ -93,21 +93,21 @@ function Navbar(props: {
   }
 
   // The icon to use for the dropdown button
-  const [imgReady, setImgReady] = useState(false);
+  const [dropdownImgReady, setDropdownImgReady] = useState(false);
 
   useEffect(() => {
     if (props.profile && props.profile.picture) {
       const img = new Image();
       img.onload = () => {
         // When it finishes loading, update the component state
-        setImgReady(true);
+        setDropdownImgReady(true);
       };
       img.src = props.profile.picture;
     }
   }, [props.profile]);
 
   const dropdownIcon =
-    imgReady && props.profile && props.profile.picture ? (
+    dropdownImgReady && props.profile && props.profile.picture ? (
       // props.profile && props.profile.picture ? (
       <img src={props.profile.picture} alt="Dropdown Button" />
     ) : (
