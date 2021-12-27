@@ -5,7 +5,7 @@ exports.checkNewUser = async (email, name, picture, user_id, pool) => {
     const client = await pool.connect();
     let res;
     try {
-        const selquery = `SELECT id FROM users WHERE user_id = '${user_id}';`;
+        const selquery = `SELECT u_id FROM users WHERE user_id = '${user_id}';`;
         res = await client.query(selquery);
         // } catch (err:any) {
     } catch (err) {
@@ -15,14 +15,14 @@ exports.checkNewUser = async (email, name, picture, user_id, pool) => {
     }
 
     // Get id if found
-    let id = undefined;
-    if (res && res.rowCount > 0) id = res.rows[0].id;
+    let u_id = undefined;
+    if (res && res.rowCount > 0) u_id = res.rows[0].u_id;
 
     // If res.rowCount is 0 (id not found), this is new user, add to table
-    if (res && res.rowCount === 0) {
+    if (res && res.rowCount === 0 && !u_id) {
         res = undefined;
         try {
-            const insquery = `INSERT INTO users(email, name, picture, user_id) VALUES('${email}', '${name}', '${picture}', '${user_id}') RETURNING id;`;
+            const insquery = `INSERT INTO users(email, name, picture, user_id) VALUES('${email}', '${name}', '${picture}', '${user_id}') RETURNING u_id;`;
             res = await client.query(insquery);
             // } catch (err:any) {
         } catch (err) {
@@ -32,15 +32,27 @@ exports.checkNewUser = async (email, name, picture, user_id, pool) => {
         }
 
         // Use id
-        if (res && res.rowCount > 0) id = res.rows[0].id;
+        if (res && res.rowCount > 0) u_id = res.rows[0].u_id;
     }
 
     // // Query for all profile information given id
     let data = undefined;
     try {
-        const sel2query = `SELECT * FROM users WHERE id=${id};`;
+        const sel2requested = `u_id, email, name, picture`;
+        const sel2query = `SELECT ${sel2requested} from users WHERE users.u_id='${u_id}';`;
         res = await client.query(sel2query);
         if (res && res.rowCount > 0) data = res.rows[0];
+        // If user found, get their notes and add as list in data output
+        if (data) {
+            const sel3requested = `note_id, name, data`;
+            const sel3query = `SELECT ${sel3requested} from notes WHERE notes.u_id='${u_id}';`;
+            res = await client.query(sel3query);
+            if (res && res.rowCount > 0) {
+                data.notes = res.rows;
+            } else {
+                data.notes = [];
+            }
+        }
     // } catch (err:any) {
     } catch (err) {
         console.error(err.stack);

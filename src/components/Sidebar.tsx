@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { User } from "@auth0/auth0-react";
-import { Profile } from "../interfaces";
+import { Profile, Note } from "../interfaces";
 
 // Create styled components for the navbar (emotion.js)
 const Side = styled.div`
@@ -43,8 +43,7 @@ const SideButton = styled.li`
   }
 `;
 
-const SideButtonList = styled.ul`
-`;
+const SideButtonList = styled.ul``;
 
 // Exported Sidebar react component
 function Sidebar(props: {
@@ -54,17 +53,41 @@ function Sidebar(props: {
   auth: boolean;
   loading: boolean;
   profile: Profile | undefined;
+  currNote: Note | undefined;
+  setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
 }) {
+  // useState hook to track the list of notes JSX elements
+  const [notesList, setNotesList] = useState<JSX.Element[]>([]);
+  const { profile, setCurrNote } = props;
+
+  // Compile list of notes, updating when profile changes
+  useEffect(() => {
+    if (profile && profile.notes) {
+      let tempNotesList: JSX.Element[] = [];
+      profile.notes.forEach(
+        (note: { note_id: number; name: string; data: string }) => {
+          tempNotesList = tempNotesList.concat(
+            <SideButton
+              key={note.note_id}
+              onClick={() => {
+                setCurrNote(note);
+              }}
+            >
+              {note.name}
+            </SideButton>
+          );
+        }
+      );
+      setNotesList(tempNotesList);
+    }
+  }, [profile, setCurrNote]);
+
   // Return jsx for component
   return (
     <>
       <Side className={props.sidebar ? "side-active" : ""}>
         <SideButtonList>
-          <SideButton>Item 1</SideButton>
-          <SideButton>Item 2</SideButton>
-          <SideButton>Item 3</SideButton>
-          <SideButton>Item 4</SideButton>
-          <SideButton>Item 5</SideButton>
+          {notesList}
         </SideButtonList>
       </Side>
     </>

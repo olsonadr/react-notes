@@ -6,7 +6,7 @@ import "./styles/App.css";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import MainPanel from "./components/MainPanel";
-import { Profile } from "./interfaces";
+import { Profile, Note } from "./interfaces";
 
 // Styled elements
 const AppComp = styled.div`
@@ -21,11 +21,14 @@ const AppComp = styled.div`
 // Exported App react component
 function App() {
   // States of App
-  const [sidebar, setSidebar] = useState(false);
+  const [sidebar, setSidebar] = useState(true);
   const [[socket], setSocket] = useState<any>([undefined]);
   const [connected, setConnected] = useState<boolean>(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [currNote, setCurrNote] = useState<Note | undefined>(undefined);
+
+  // Refs of App (mutable vals)
   const profileRequestSent = useRef(false);
   const retrySocket = useRef(false);
 
@@ -121,6 +124,8 @@ function App() {
         auth={isAuthenticated}
         loading={isLoading}
         profile={profile}
+        currNote={currNote}
+        setCurrNote={setCurrNote}
       />
       <MainPanel
         setSidebar={setSidebar}
@@ -130,10 +135,8 @@ function App() {
         loading={isLoading}
         socket={socket}
         profile={profile}
-        // note={{loaded:false, data:""}}
-        // note={{loaded:false, data:"data"}}
-        note={{loaded:true, data:""}}
-        // note={{ loaded: true, data: "data" }}
+        currNote={currNote}
+        setCurrNote={setCurrNote}
       />
     </AppComp>
   );
