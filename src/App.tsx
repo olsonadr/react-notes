@@ -116,6 +116,7 @@ function App() {
         auth={isAuthenticated}
         loading={isLoading}
         profile={profile}
+        socket={socket}
       />
       <Sidebar
         setSidebar={setSidebar}
