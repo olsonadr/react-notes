@@ -107,6 +107,8 @@ io.on('connection', (socket) => {
             console.log('Emitting profile_refresh and note_redirect responses!');
             // Return a response message to refresh user profile with new profile
             socket.emit('profile_refresh', profile);
+            // Return a response message to redirect to the note_id of the new note
+            socket.emit('note_redirect', {note_id: note_id});
             
         }
     });

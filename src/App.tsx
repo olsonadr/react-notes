@@ -58,7 +58,7 @@ function App() {
       return;
     };
   }, [setSocket]);
-
+  
   // useEffect hook to connect socket once created
   useEffect(() => {
     // When socket is created, setup handlers
@@ -89,6 +89,18 @@ function App() {
         console.log("Received profile refresh request!");
         setProfile(msg);
       });
+      // Note redirect handler
+      socket.on("note_redirect", (msg: { note_id: number }) => {
+        console.log(`Received redirect request for note ${msg.note_id}!`);
+        if (profile && profile.notes) {
+          let notes_with_id = profile.notes.filter((obj) => {
+            return obj.note_id === msg.note_id;
+          });
+          if (notes_with_id && notes_with_id.length > 0) {
+            setCurrNote(notes_with_id[0]);
+          }
+        }
+      });
     }
   }, [socket, profile]);
 
@@ -96,7 +108,7 @@ function App() {
   useEffect(() => {
     // Reset retry prompter
     retrySocket.current = false;
-    
+
     // Socket profile request message handlers
     if (socket) {
       // If connected and authenticated, request profile information
