@@ -12,11 +12,13 @@ CREATE TABLE users (
     user_id VARCHAR(50) NOT NULL PRIMARY KEY
 );
 
+
+-- -- Initialization of notes table for react-notes app
 -- Delete if exists
 -- DROP TABLE IF EXISTS notes;
 -- Create notes table
 CREATE TABLE notes (
-    u_id VARCHAR(50) NOT NULL,
+    u_id INTEGER NOT NULL,
     note_id SERIAL NOT NULL,
     name VARCHAR(200) NOT NULL,
     data TEXT,
