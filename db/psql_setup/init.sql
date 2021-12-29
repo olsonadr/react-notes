@@ -74,7 +74,7 @@ CREATE OR REPLACE FUNCTION add_note (
 
             -- -- Get the max_suffix in db
             WITH note_suffixes (suffix) AS (
-                    SELECT convert_to_integer(RIGHT(name, -1*CHAR_LENGTH(name_in))) AS suffix FROM notes WHERE name LIKE (name_in || ' %')
+                    SELECT convert_to_integer(RIGHT(name, -1*CHAR_LENGTH(name_in))) AS suffix FROM notes WHERE name LIKE (name_in || ' %') AND u_id = u_id_in
             )
             SELECT MAX(suffix) INTO max_suffix FROM note_suffixes;
 
@@ -83,11 +83,11 @@ CREATE OR REPLACE FUNCTION add_note (
             INTO new_name
             FROM (
                 WITH note_suffixes (suffix) AS (
-                    SELECT convert_to_integer(RIGHT(name, -1*CHAR_LENGTH(name_in))) AS suffix FROM notes WHERE name LIKE (name_in || ' %')
+                    SELECT convert_to_integer(RIGHT(name, -1*CHAR_LENGTH(name_in))) AS suffix FROM notes WHERE name LIKE (name_in || ' %') AND u_id = u_id_in
                 )
                 SELECT generate_series(1, max_suffix) as suffix EXCEPT SELECT suffix FROM note_suffixes
             ) s
-            ORDER BY new_name
+            ORDER BY suffix
             LIMIT 1;
         END IF;
 
