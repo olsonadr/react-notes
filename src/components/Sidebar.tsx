@@ -86,9 +86,7 @@ function Sidebar(props: {
   return (
     <>
       <Side className={props.sidebar ? "side-active" : ""}>
-        <SideButtonList>
-          {notesList}
-        </SideButtonList>
+        <SideButtonList>{notesList}</SideButtonList>
       </Side>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import {
   Editor,
@@ -149,23 +149,33 @@ const BoxS = styled(Box)`
 function TextEditor(props: {
   currNote: Note | undefined;
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
-  setNoteData?: (newData: string) => {} | undefined;
 }) {
   // Get ref to editor
   const editor = useRef<Editor>(null);
 
+  // Callback for setting editor state on note load
+  const loadCurrNote = useCallback(
+    () => {
+      return EditorState.createWithContent(
+        ContentState.createFromText(
+          props.currNote && props.currNote.data ? props.currNote.data : ""
+        ),
+        // EditorState.createEmpty(
+        new CompositeDecorator([
+          { strategy: linkStrategy, component: DecoratedLink },
+        ])
+      );
+    },
+    [props.currNote],
+  )
+
   // State of editor
-  const [editorState, setEditorState] = useState<EditorState>(
-    EditorState.createWithContent(
-      ContentState.createFromText(
-        props.currNote && props.currNote.data ? props.currNote.data : ""
-      ),
-      // EditorState.createEmpty(
-      new CompositeDecorator([
-        { strategy: linkStrategy, component: DecoratedLink },
-      ])
-    )
-  );
+  const [editorState, setEditorState] = useState<EditorState>(loadCurrNote);
+
+  // When note changes, change editor state
+  useEffect(() => {
+    setEditorState(loadCurrNote());
+  }, [props.currNote, loadCurrNote]);
 
   // Focus editor callback
   const focusEditor = React.useCallback(() => {
