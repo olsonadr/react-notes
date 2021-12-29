@@ -59,6 +59,39 @@ function App() {
     };
   }, [setSocket]);
 
+  // useEffect hook to connect socket once created
+  useEffect(() => {
+    // When socket is created, setup handlers
+    if (socket) {
+      // Auth confirmation with profile information
+      socket.on("connected", () => {
+        console.log("Connected to backend!");
+        setConnected(true);
+        if (profileRequestSent.current === true) {
+          profileRequestSent.current = false;
+          retrySocket.current = true;
+        }
+      });
+    }
+  }, [socket]);
+
+  // useEffect hook to setup socket handlers once it is connected
+  useEffect(() => {
+    // When socket is created, setup handlers
+    if (socket) {
+      // Auth confirmation with profile information
+      socket.on("profile_response", (msg: Profile) => {
+        console.log("Received profile response!");
+        setProfile(msg);
+      });
+      // Profile refresh handler
+      socket.on("profile_refresh", (msg: Profile) => {
+        console.log("Received profile refresh request!");
+        setProfile(msg);
+      });
+    }
+  }, [socket, profile]);
+
   // useEffect hook to send profile requests on user and isAuthenticated updates
   useEffect(() => {
     // Reset retry prompter
@@ -82,20 +115,7 @@ function App() {
         });
         profileRequestSent.current = true;
       }
-      // Auth confirmation with profile information
-      socket.on("connected", () => {
-        console.log("Connected to backend!");
-        setConnected(true);
-        if (profileRequestSent.current === true) {
-          profileRequestSent.current = false;
-          retrySocket.current = true;
-        }
-      });
-      // Auth confirmation with profile information
-      socket.on("profile_response", (msg: Profile) => {
-        console.log("Received profile response!");
-        setProfile(msg);
-      });
+    } else {
       // If disconnected, reset profileRequestSent
       profileRequestSent.current = false;
     }
@@ -104,7 +124,7 @@ function App() {
     return () => {
       return;
     };
-  }, [user, isAuthenticated, socket, connected, profileRequestSent, retrySocket]);
+  }, [socket, connected, isAuthenticated, user]);
 
   // Return App component jsx
   return (

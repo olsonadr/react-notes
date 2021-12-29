@@ -93,6 +93,24 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Handler for request to add new note to server
+    socket.on('add_note', async (msg) => {
+        console.log('Received add_note request!');
+        // If payload given, attempt to create new note, give back note_id for new note
+        if (msg && msg.name && msg.data !== null && msg.user_id) {
+            // Insert new note into DB and get its note_id
+            const { user_id, name, data } = msg;
+            const u_id = await getUID(user_id, pool);
+            const note_id = await addNewNote(u_id, name, data, pool);
+            const profile = await getProfile(u_id, pool);
+            
+            console.log('Emitting profile_refresh and note_redirect responses!');
+            // Return a response message to refresh user profile with new profile
+            socket.emit('profile_refresh', profile);
+            
+        }
+    });
+
     // Handler for disconnecting socket.io client
     socket.on('disconnect', () => {
         // Handle client disconnect here
