@@ -43,6 +43,15 @@ const { Pool } = require("pg");
 // Get psql helper to get user's data given Auth0 values (name, email, picture)
 const { checkNewUser } = require(path.join(__dirname, "server_src/auth_checkNewUser.ts"));
 
+// Get addNewNote helper to add a new note to the notes table and return its note_id, or null on failure
+const { addNewNote } = require(path.join(__dirname, "server_src/db_addNewNote.ts"));
+
+// Get getUID helper to get the u_id of a user from their user_id, or null on failure
+const { getUID } = require(path.join(__dirname, "server_src/auth_getUID.ts"));
+
+// Get getProfile helper to get the profile of a user from their u_id, or null on failure
+const { getProfile } = require(path.join(__dirname, "server_src/auth_getProfile.ts"));
+
 // Setup postgresql connection pool
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL || process.env.DATABASE_URL_DEV,
@@ -71,7 +80,7 @@ io.on('connection', (socket) => {
         if (msg && msg.email && msg.name && msg.user_id) {
             logMsg += ` for auth'd user ${msg.name} w/ supposed id ${msg.user_id}, checking if they are in the users database...`;
             let picture = msg.picture ? msg.picture : "https://i.ibb.co/k4zLTbW/176-1760995-png-file-svg-user-icon-free-copyright-transparent.jpg";
-            checkNewUser(msg.email, msg.name, picture, msg.user_id, pool)
+            checkNewUser(msg.email, msg.name, picture, msg.user_id, pool, getUID, getProfile)
                 .then((data) => {
                     if (data) logMsg += ` and they belong in database so sending profile response to them!\n`;
                     else logMsg += ` and they don't belong in database so sending them no data!\n`;
