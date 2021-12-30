@@ -24,14 +24,15 @@
   --nav-dd-button-padding: 0.5rem;
   --sidebar-width: 250px;
   --sidebar-padding: 5px;
-  --sidebar-in-time: 400ms;
-  --sidebar-out-time: 800ms;
+  --sidebar-in-time: 300ms;
+  --sidebar-out-time: 300ms;
   --dropdown-width: 270px;
   --dropdown-padding: 1rem;
 
   --border: 1px solid var(--bg-bold);
   --border-radius: 8px;
   --speed: 200ms;
+  --color-speed: 150ms;
 }
 
 ul {

@@ -344,7 +344,7 @@ const DropdownItemS = styled.div`
   display: flex;
   align-items: center;
   border-radius: var(--border-radius);
-  transition: background var(--speed);
+  transition: background var(--color-speed);
   padding: var(--nav-dd-button-padding);
   border: none;
   background-color: var(--bg);
