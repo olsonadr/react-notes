@@ -89,7 +89,12 @@ function MainPanel(props: {
           noteLoaded &&
           props.auth &&
           props.user &&
-          !props.loading && <TextEditor currNote={props.currNote} setCurrNote={props.setCurrNote} />}
+          !props.loading && (
+            <TextEditor
+              currNote={props.currNote}
+              setCurrNote={props.setCurrNote}
+            />
+          )}
         {/* If logged in and profile loaded, but selected note not loaded */}
         {props.profile &&
           noteSelected &&

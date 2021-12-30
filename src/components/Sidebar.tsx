@@ -41,6 +41,10 @@ const SideButton = styled.li`
     color: var(--bg-text-bold);
     cursor: pointer;
   }
+  &.active {
+    background-color: var(--bg-bold);
+    color: var(--bg-text-bold);
+  }
 `;
 
 const SideButtonList = styled.ul``;
@@ -58,16 +62,21 @@ function Sidebar(props: {
 }) {
   // useState hook to track the list of notes JSX elements
   const [notesList, setNotesList] = useState<JSX.Element[]>([]);
-  const { profile, setCurrNote } = props;
+  const { profile, currNote, setCurrNote } = props;
 
   // Compile list of notes, updating when profile changes
   useEffect(() => {
     if (profile && profile.notes) {
       let tempNotesList: JSX.Element[] = [];
       profile.notes.forEach(
-        (note: { note_id: number; name: string; data: string }) => {
+        (note: { note_id: number; name: string; data: string; }) => {
           tempNotesList = tempNotesList.concat(
             <SideButton
+              className={
+                currNote && note.note_id === currNote.note_id
+                  ? "active"
+                  : ""
+              }
               key={note.note_id}
               onClick={() => {
                 setCurrNote(note);
@@ -80,7 +89,7 @@ function Sidebar(props: {
       );
       setNotesList(tempNotesList);
     }
-  }, [profile, setCurrNote]);
+  }, [profile, setCurrNote, currNote]);
 
   // Return jsx for component
   return (

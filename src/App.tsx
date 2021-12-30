@@ -102,7 +102,7 @@ function App() {
         }
       });
     }
-  }, [socket, profile]);
+  }, [socket, profile, currNote]);
 
   // useEffect hook to send profile requests on user and isAuthenticated updates
   useEffect(() => {
