@@ -10,13 +10,14 @@ import { ReactComponent as ArrowIcon } from "../icons/arrow.svg";
 import React, { useEffect, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import styled from "@emotion/styled";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaPlus } from "react-icons/fa";
 import { BsPersonCircle } from "react-icons/bs";
 import logo from "../img/small_logo.png";
 import { User } from "@auth0/auth0-react";
 import { Profile } from "../interfaces";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
+import { Socket } from "socket.io-client";
 
 // Create styled components for the Navbar (emotion.js)
 const Nav = styled.nav`
@@ -32,6 +33,11 @@ const Nav = styled.nav`
 
 const NavLeft = styled.div`
   flex: 0 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
   position: absolute;
   left: 1rem;
 `;
@@ -50,6 +56,18 @@ const NavRight = styled.div`
 `;
 
 const SidebarToggle = styled(FaBars)`
+  font-size: 1.5rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  background-color: var(--bg);
+  &:hover {
+    background-color: var(--bg-bold);
+  }
+`;
+
+const AddNoteButton = styled(FaPlus)`
   font-size: 1.5rem;
   border-radius: 0.5rem;
   padding: 0.5rem;
@@ -88,10 +106,20 @@ function Navbar(props: {
   auth: boolean;
   loading: boolean;
   profile: Profile | undefined;
+  socket: Socket;
 }) {
   // Create wrapper to toggle sidebar using setState passed in props
   function toggleSidebar() {
     props.setSidebar(!props.sidebar);
+  }
+
+  // Create addNote function
+  function addNote() {
+    console.log('Hit the add button!');
+    if (props.socket && props.user && props.user.sub && !props.loading) {
+      props.socket.emit("add_note", {user_id: props.user.sub, name: "New Note", data: ""});
+    }
+    return;
   }
 
   // The icon to use for the dropdown button
@@ -117,10 +145,11 @@ function Navbar(props: {
     );
 
   // Whether we are logged in state for children
-  const loggedIn:boolean = props.auth && props.user && !props.loading ? true : false;
+  const loggedIn: boolean =
+    props.auth && props.user && !props.loading ? true : false;
 
   // Prevent dragging handler
-  const preventDragHandler = (e:any) => {
+  const preventDragHandler = (e: any) => {
     e.preventDefault();
   };
 
@@ -129,6 +158,7 @@ function Navbar(props: {
       <Nav>
         <NavLeft>
           <SidebarToggle onClick={toggleSidebar} />
+          <AddNoteButton onClick={addNote} />
         </NavLeft>
         <NavCenter>
           <NavImg
@@ -367,9 +397,9 @@ function DropdownMenu(props: {
 
   // Login/Logout button in dropdown depending on auth state
   const LogInOutButton = props.loggedIn ? (
-      <LogoutButton className="hover-on transition-bg nav-dd-style" />
-      ) : (
-      <LoginButton className="hover-on transition-bg nav-dd-style" />
+    <LogoutButton className="hover-on transition-bg nav-dd-style" />
+  ) : (
+    <LoginButton className="hover-on transition-bg nav-dd-style" />
   );
 
   // Return jsx for DropdownMenu to render

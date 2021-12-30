@@ -6,7 +6,7 @@ import "./styles/App.css";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import MainPanel from "./components/MainPanel";
-import { Profile } from "./interfaces";
+import { Profile, Note } from "./interfaces";
 
 // Styled elements
 const AppComp = styled.div`
@@ -21,11 +21,14 @@ const AppComp = styled.div`
 // Exported App react component
 function App() {
   // States of App
-  const [sidebar, setSidebar] = useState(false);
+  const [sidebar, setSidebar] = useState(true);
   const [[socket], setSocket] = useState<any>([undefined]);
   const [connected, setConnected] = useState<boolean>(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [currNote, setCurrNote] = useState<Note | undefined>(undefined);
+
+  // Refs of App (mutable vals)
   const profileRequestSent = useRef(false);
   const retrySocket = useRef(false);
 
@@ -55,12 +58,57 @@ function App() {
       return;
     };
   }, [setSocket]);
+  
+  // useEffect hook to connect socket once created
+  useEffect(() => {
+    // When socket is created, setup handlers
+    if (socket) {
+      // Auth confirmation with profile information
+      socket.on("connected", () => {
+        console.log("Connected to backend!");
+        setConnected(true);
+        if (profileRequestSent.current === true) {
+          profileRequestSent.current = false;
+          retrySocket.current = true;
+        }
+      });
+    }
+  }, [socket]);
+
+  // useEffect hook to setup socket handlers once it is connected
+  useEffect(() => {
+    // When socket is created, setup handlers
+    if (socket) {
+      // Auth confirmation with profile information
+      socket.on("profile_response", (msg: Profile) => {
+        console.log("Received profile response!");
+        setProfile(msg);
+      });
+      // Profile refresh handler
+      socket.on("profile_refresh", (msg: Profile) => {
+        console.log("Received profile refresh request!");
+        setProfile(msg);
+      });
+      // Note redirect handler
+      socket.on("note_redirect", (msg: { note_id: number }) => {
+        console.log(`Received redirect request for note ${msg.note_id}!`);
+        if (profile && profile.notes) {
+          let notes_with_id = profile.notes.filter((obj) => {
+            return obj.note_id === msg.note_id;
+          });
+          if (notes_with_id && notes_with_id.length > 0) {
+            setCurrNote(notes_with_id[0]);
+          }
+        }
+      });
+    }
+  }, [socket, profile, currNote]);
 
   // useEffect hook to send profile requests on user and isAuthenticated updates
   useEffect(() => {
     // Reset retry prompter
     retrySocket.current = false;
-    
+
     // Socket profile request message handlers
     if (socket) {
       // If connected and authenticated, request profile information
@@ -79,20 +127,7 @@ function App() {
         });
         profileRequestSent.current = true;
       }
-      // Auth confirmation with profile information
-      socket.on("connected", () => {
-        console.log("Connected to backend!");
-        setConnected(true);
-        if (profileRequestSent.current === true) {
-          profileRequestSent.current = false;
-          retrySocket.current = true;
-        }
-      });
-      // Auth confirmation with profile information
-      socket.on("profile_response", (msg: Profile) => {
-        console.log("Received profile response!");
-        setProfile(msg);
-      });
+    } else {
       // If disconnected, reset profileRequestSent
       profileRequestSent.current = false;
     }
@@ -101,7 +136,7 @@ function App() {
     return () => {
       return;
     };
-  }, [user, isAuthenticated, socket, connected, profileRequestSent, retrySocket]);
+  }, [socket, connected, isAuthenticated, user]);
 
   // Return App component jsx
   return (
@@ -113,6 +148,7 @@ function App() {
         auth={isAuthenticated}
         loading={isLoading}
         profile={profile}
+        socket={socket}
       />
       <Sidebar
         setSidebar={setSidebar}
@@ -121,6 +157,8 @@ function App() {
         auth={isAuthenticated}
         loading={isLoading}
         profile={profile}
+        currNote={currNote}
+        setCurrNote={setCurrNote}
       />
       <MainPanel
         setSidebar={setSidebar}
@@ -130,10 +168,8 @@ function App() {
         loading={isLoading}
         socket={socket}
         profile={profile}
-        // note={{loaded:false, data:""}}
-        // note={{loaded:false, data:"data"}}
-        note={{loaded:true, data:""}}
-        // note={{ loaded: true, data: "data" }}
+        currNote={currNote}
+        setCurrNote={setCurrNote}
       />
     </AppComp>
   );
