@@ -14,7 +14,7 @@ import { FaBars, FaPlus } from "react-icons/fa";
 import { BsPersonCircle } from "react-icons/bs";
 import logo from "../img/small_logo.png";
 import { User } from "@auth0/auth0-react";
-import { Note, Profile } from "../interfaces";
+import { Profile } from "../interfaces";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
 import { Socket } from "socket.io-client";
@@ -106,7 +106,7 @@ function Navbar(props: {
   auth: boolean;
   loading: boolean;
   profile: Profile | undefined;
-  socket: any;
+  socket: Socket;
 }) {
   // Create wrapper to toggle sidebar using setState passed in props
   function toggleSidebar() {
