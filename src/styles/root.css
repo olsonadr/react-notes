@@ -10,6 +10,8 @@
   --bg-bolder: rgb(73, 70, 90);
   --bg-text: rgb(224, 224, 224);
   --bg-text-bold: rgb(255, 255, 255);
+  --bg-text-light: rgb(179, 179, 179);
+  --bg-text-lighter: rgb(73, 73, 73);
   --fg: rgb(224, 224, 224);
   --fg-bold: rgb(255, 255, 255);
   --fg-text: rgb(44, 42, 54);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { User } from "@auth0/auth0-react";
+import { FaTrash } from "react-icons/fa";
 import { Profile, Note } from "../interfaces";
 
 // Create styled components for the navbar (emotion.js)
@@ -36,6 +37,9 @@ const SideButton = styled.li`
   border-radius: 5px;
   width: var(--sidebar-width);
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
   &:hover {
     background-color: var(--bg-bold);
     color: var(--bg-text-bold);
@@ -45,7 +49,28 @@ const SideButton = styled.li`
     background-color: var(--bg-bold);
     color: var(--bg-text-bold);
   }
-`;
+  & .trash {
+    visibility: hidden;
+  }
+  &:hover .trash {
+    visibility: visible;
+  }
+  `;
+
+  const SideDeleteButton = styled(FaTrash)`
+    font-size: 1rem;
+    padding: 0.1rem;
+    margin-right: 0.25rem;
+    justify-self: right;
+    cursor: pointer;
+    flex: 0 1 auto;
+    position: absolute;
+    right: 0.5rem;
+    color: var(--bg-text-light);
+    &:hover {
+      color: var(--bg-text-bold);
+    }
+  `;
 
 const SideButtonList = styled.ul``;
 
@@ -69,20 +94,19 @@ function Sidebar(props: {
     if (profile && profile.notes) {
       let tempNotesList: JSX.Element[] = [];
       profile.notes.forEach(
-        (note: { note_id: number; name: string; data: string; }) => {
+        (note: { note_id: number; name: string; data: string }) => {
           tempNotesList = tempNotesList.concat(
             <SideButton
               className={
-                currNote && note.note_id === currNote.note_id
-                  ? "active"
-                  : ""
+                currNote && note.note_id === currNote.note_id ? "active" : ""
               }
               key={note.note_id}
               onClick={() => {
                 setCurrNote(note);
               }}
             >
-              {note.name}
+              <p>{note.name}</p>
+              <SideDeleteButton className="trash"/>
             </SideButton>
           );
         }
