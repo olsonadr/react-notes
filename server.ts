@@ -46,6 +46,8 @@ const { checkNewUser } = require(path.join(__dirname, "server_src/auth_checkNewU
 // Get addNewNote helper to add a new note to the notes table and return its note_id, or null on failure
 const { addNewNote_client } = require(path.join(__dirname, "server_src/db_addNewNote.ts"));
 
+// Get deleteNote helper to delete a note from the notes table
+const { deleteNote_client } = require(path.join(__dirname, "server_src/db_deleteNote.ts"));
 
 // Get getUID helper to get the u_id of a user from their user_id, or null on failure
 const { getUID, getUID_client } = require(path.join(__dirname, "server_src/auth_getUID.ts"));
@@ -117,6 +119,32 @@ io.on('connection', (socket) => {
             // Return a response message to redirect to the note_id of the new note
             socket.emit('note_redirect', {note_id: note_id});
             
+        }
+    });
+
+    // Handler for request to delete note from server
+    socket.on('delete_note', async (msg) => {
+        // If payload given, attempt to delete note
+        if (msg && msg.user_id && msg.note_id) {
+            // Get connection
+            const client = await pool.connect();
+
+            // Remove note from DB
+            console.log('Received delete_note request!');
+            const { user_id, note_id } = msg;
+            const u_id = await getUID_client(user_id, client);
+            console.log('Got u_id');
+            await deleteNote_client(u_id, note_id, client);
+            console.log('Deleted note');
+            const profile = await getProfile_client(u_id, client);
+            console.log('Got profile');
+
+            // Close connection
+            client.end();
+            
+            // Return a response message to refresh user profile with new profile
+            console.log('Emitting profile_refresh responses!');
+            socket.emit('profile_refresh', profile);
         }
     });
 

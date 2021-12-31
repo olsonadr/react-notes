@@ -156,6 +156,8 @@ function App() {
         user={user}
         auth={isAuthenticated}
         loading={isLoading}
+          socket={socket}
+          connected={connected}
         profile={profile}
         currNote={currNote}
         setCurrNote={setCurrNote}

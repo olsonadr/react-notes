@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { User } from "@auth0/auth0-react";
 import { FaTrash } from "react-icons/fa";
 import { Profile, Note } from "../interfaces";
+import { Socket } from "socket.io-client";
 
 // Create styled components for the navbar (emotion.js)
 const Side = styled.div`
@@ -81,6 +82,8 @@ function Sidebar(props: {
   user: User | undefined;
   auth: boolean;
   loading: boolean;
+  socket: Socket | undefined;
+  connected: boolean;
   profile: Profile | undefined;
   currNote: Note | undefined;
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
@@ -88,6 +91,22 @@ function Sidebar(props: {
   // useState hook to track the list of notes JSX elements
   const [notesList, setNotesList] = useState<JSX.Element[]>([]);
   const { profile, currNote, setCurrNote } = props;
+
+  // Delete note button callback
+  const user_id = props.user && props.user.sub ? props.user.sub : undefined;
+  const deleteNoteCallback = useCallback((e, note_id) => {
+    // Stop click propagation
+    e.stopPropagation();
+
+    // Check if socket is connected, if so, emit delete_note message
+    if (props.socket && props.connected && user_id) {
+      console.log('Sending delete_note request!');
+      props.socket.emit("delete_note", {
+        user_id: user_id,
+        note_id: note_id,
+      });
+    }
+  }, [props.socket, props.connected, user_id]);
 
   // Compile list of notes, updating when profile changes
   useEffect(() => {
@@ -106,14 +125,18 @@ function Sidebar(props: {
               }}
             >
               <p>{note.name}</p>
-              <SideDeleteButton className="trash"/>
+              <SideDeleteButton
+                key={note.note_id}
+                className="trash"
+                onClick={(e) => deleteNoteCallback(e, note.note_id)}
+              />
             </SideButton>
           );
         }
       );
       setNotesList(tempNotesList);
     }
-  }, [profile, setCurrNote, currNote]);
+  }, [profile, setCurrNote, currNote, deleteNoteCallback]);
 
   // Return jsx for component
   return (

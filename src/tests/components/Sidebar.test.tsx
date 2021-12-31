@@ -9,6 +9,8 @@ test("Sidebar renders without exception", () => {
   const userOpt = [undefined];
   const authOpt = [true, false];
   const loadingOpt = [true, false];
+  const socketOpt = [undefined];
+  const connectedOpt = [false];
   const profileOpt = [undefined];
   const setCurrNoteOpt = [() => {}];
   const currNoteOpt = [
@@ -24,6 +26,8 @@ test("Sidebar renders without exception", () => {
     profile: profileOpt,
     currNote: currNoteOpt,
     setCurrNote: setCurrNoteOpt,
+    socket: socketOpt,
+    connected: connectedOpt,
   };
 
   // Setup callback to test each combinatio
@@ -39,6 +43,8 @@ test("Sidebar renders without exception", () => {
         profile={props.profile}
         setCurrNote={props.setCurrNoteOpt}
         currNote={props.currNoteOpt}
+        socket={props.socket}
+        connected={props.connected}
       />,
       div
     );

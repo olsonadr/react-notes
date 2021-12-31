@@ -106,7 +106,7 @@ function Navbar(props: {
   auth: boolean;
   loading: boolean;
   profile: Profile | undefined;
-  socket: Socket;
+  socket: Socket | undefined;
 }) {
   // Create wrapper to toggle sidebar using setState passed in props
   function toggleSidebar() {
