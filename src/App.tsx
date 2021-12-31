@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { useAuth0 } from "@auth0/auth0-react";
-import io from "socket.io-client";
+import {Socket as Socket_IO} from "socket.io-client";
 import "./styles/App.css";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import MainPanel from "./components/MainPanel";
+import { SocketContext, Socket } from "./components/Socket";
 import { Profile, Note } from "./interfaces";
 
 // Styled elements
@@ -22,7 +23,6 @@ const AppComp = styled.div`
 function App() {
   // States of App
   const [sidebar, setSidebar] = useState(true);
-  const [[socket], setSocket] = useState<any>([undefined]);
   const [connected, setConnected] = useState<boolean>(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
@@ -32,32 +32,8 @@ function App() {
   const profileRequestSent = useRef(false);
   const retrySocket = useRef(false);
 
-  // useEffect hook to handle socket opening, init messages, and cleanup closing
-  useEffect(() => {
-    // Create new connection
-    const URL = process.env.REACT_APP_DEV_PORT
-      ? `:${process.env.REACT_APP_DEV_PORT}/`
-      : `${window.location.host}`;
-    // ? `${window.location.hostname}:${process.env.REACT_APP_PORT}`
-    // const URL = `${window.location.hostname}:5000/api`;
-    // const URL = `/`;
-    console.log(`Trying to connect to ${URL}`);
-    const newSocket = io(URL, {
-      reconnectionDelay: 1000,
-      reconnection: true,
-      transports: ["websocket"],
-      agent: false,
-      upgrade: false,
-      rejectUnauthorized: false,
-    });
-    setSocket([newSocket]);
-
-    // Cleanup callback
-    return () => {
-      newSocket.close();
-      return;
-    };
-  }, [setSocket]);
+  // Connect to socket using Socket react context
+  const socket = React.useContext(SocketContext);
   
   // useEffect hook to connect socket once created
   useEffect(() => {
@@ -140,40 +116,42 @@ function App() {
 
   // Return App component jsx
   return (
-    <AppComp>
-      <Navbar
-        setSidebar={setSidebar}
-        sidebar={sidebar}
-        user={user}
-        auth={isAuthenticated}
-        loading={isLoading}
-        profile={profile}
-        socket={socket}
-      />
-      <Sidebar
-        setSidebar={setSidebar}
-        sidebar={sidebar}
-        user={user}
-        auth={isAuthenticated}
-        loading={isLoading}
+    <SocketContext.Provider value={Socket}>
+      <AppComp>
+        <Navbar
+          setSidebar={setSidebar}
+          sidebar={sidebar}
+          user={user}
+          auth={isAuthenticated}
+          loading={isLoading}
+          profile={profile}
+          socket={socket}
+        />
+        <Sidebar
+          setSidebar={setSidebar}
+          sidebar={sidebar}
+          user={user}
+          auth={isAuthenticated}
+          loading={isLoading}
           socket={socket}
           connected={connected}
-        profile={profile}
-        currNote={currNote}
-        setCurrNote={setCurrNote}
-      />
-      <MainPanel
-        setSidebar={setSidebar}
-        sidebar={sidebar}
-        user={user}
-        auth={isAuthenticated}
-        loading={isLoading}
-        socket={socket}
-        profile={profile}
-        currNote={currNote}
-        setCurrNote={setCurrNote}
-      />
-    </AppComp>
+          profile={profile}
+          currNote={currNote}
+          setCurrNote={setCurrNote}
+        />
+        <MainPanel
+          setSidebar={setSidebar}
+          sidebar={sidebar}
+          user={user}
+          auth={isAuthenticated}
+          loading={isLoading}
+          socket={socket}
+          profile={profile}
+          currNote={currNote}
+          setCurrNote={setCurrNote}
+        />
+      </AppComp>
+    </SocketContext.Provider>
   );
 }
 
