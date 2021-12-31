@@ -22,29 +22,39 @@ const AppComp = styled.div`
 function App() {
   // States of App
   const [sidebar, setSidebar] = useState(true);
-  const [connected, setConnected] = useState<boolean>(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [currNote, setCurrNote] = useState<Note | undefined>(undefined);
 
   // Refs of App (mutable vals)
-  const profileRequestSent = useRef(false);
-  const retrySocket = useRef(false);
+  const sent: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
+  const recv: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
+  const retry: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
+  const sConnected = useRef(false);
 
   // Connect to socket using Socket react context
   const socket = React.useContext(SocketContext);
-  
-  // useEffect hook to connect socket once created
+
+  // useEffect hook to handle connects and disconnects once socket created
   useEffect(() => {
-    // When socket is created, setup handlers
     if (socket) {
       // On connect handler
       socket.on("connect", () => {
         console.log("Connected to backend!");
-        setConnected(true);
-        if (profileRequestSent.current === true) {
-          profileRequestSent.current = false;
-          retrySocket.current = true;
+
+        sConnected.current = true;
+      });
+      // On disconnect handler
+      socket.on("disconnect", () => {
+        console.log("Lost connection with backend!");
+
+        sConnected.current = false;
+
+        if (
+          sent.current["profile_request"] === true &&
+          !recv.current["profile_request"]
+        ) {
+          retry.current["profile_request"] = true;
         }
       });
     }
@@ -76,17 +86,15 @@ function App() {
 
   // useEffect hook to send profile requests on user and isAuthenticated updates
   useEffect(() => {
-    // Reset retry prompter
-    retrySocket.current = false;
-
-    // Socket profile request message handlers
     if (socket) {
       // If connected and authenticated, request profile information
       if (
-        connected === true &&
+        sConnected.current === true &&
         user &&
         isAuthenticated &&
-        !profileRequestSent.current
+        (!sent.current["profile_request"] ||
+          retry.current["profile_request"] === true)
+        // !profileRequestSent.current
       ) {
         console.log("Sending profile request!");
         socket.emit(
@@ -100,9 +108,13 @@ function App() {
           (msg: Profile) => {
             // after receiving ack message from server
             console.log("Received profile response!");
+            recv.current["profile_request"] = true;
+            retry.current["profile_request"] = false;
             setProfile(msg);
           }
         );
+        sent.current["profile_request"] = true;
+        retry.current["profile_request"] = false;
       }
     }
 
