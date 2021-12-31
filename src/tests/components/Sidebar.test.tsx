@@ -10,9 +10,9 @@ test("Sidebar renders without exception", () => {
   const authOpt = [true, false];
   const loadingOpt = [true, false];
   const socketOpt = [undefined];
-  const connectedOpt = [false];
   const profileOpt = [undefined];
   const setCurrNoteOpt = [() => {}];
+  const deleteNoteCallbackOpt = [(a:any, b:any) => {}];
   const currNoteOpt = [
     undefined,
     { note_id: 2, name: "new note", data: "contents!" },
@@ -27,7 +27,7 @@ test("Sidebar renders without exception", () => {
     currNote: currNoteOpt,
     setCurrNote: setCurrNoteOpt,
     socket: socketOpt,
-    connected: connectedOpt,
+    deleteNoteCallback: deleteNoteCallbackOpt,
   };
 
   // Setup callback to test each combinatio
@@ -44,7 +44,7 @@ test("Sidebar renders without exception", () => {
         setCurrNote={props.setCurrNoteOpt}
         currNote={props.currNoteOpt}
         socket={props.socket}
-        connected={props.connected}
+        deleteNoteCallback={props.deleteNoteCallback}
       />,
       div
     );

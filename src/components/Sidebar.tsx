@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { User } from "@auth0/auth0-react";
 import { FaTrash } from "react-icons/fa";
@@ -56,22 +56,22 @@ const SideButton = styled.li`
   &:hover .trash {
     visibility: visible;
   }
-  `;
+`;
 
-  const SideDeleteButton = styled(FaTrash)`
-    font-size: 1rem;
-    padding: 0.1rem;
-    margin-right: 0.25rem;
-    justify-self: right;
-    cursor: pointer;
-    flex: 0 1 auto;
-    position: absolute;
-    right: 0.5rem;
-    color: var(--bg-text-light);
-    &:hover {
-      color: var(--bg-text-bold);
-    }
-  `;
+const SideDeleteButton = styled(FaTrash)`
+  font-size: 1rem;
+  padding: 0.1rem;
+  margin-right: 0.25rem;
+  justify-self: right;
+  cursor: pointer;
+  flex: 0 1 auto;
+  position: absolute;
+  right: 0.5rem;
+  color: var(--bg-text-light);
+  &:hover {
+    color: var(--bg-text-bold);
+  }
+`;
 
 const SideButtonList = styled.ul``;
 
@@ -83,30 +83,17 @@ function Sidebar(props: {
   auth: boolean;
   loading: boolean;
   socket: Socket | undefined;
-  connected: boolean;
   profile: Profile | undefined;
   currNote: Note | undefined;
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
+  deleteNoteCallback: (e: any, note_id: any) => void;
 }) {
+  // Destructure props that will be used in dependency lists
+  const {deleteNoteCallback} = props;
+
   // useState hook to track the list of notes JSX elements
   const [notesList, setNotesList] = useState<JSX.Element[]>([]);
   const { profile, currNote, setCurrNote } = props;
-
-  // Delete note button callback
-  const user_id = props.user && props.user.sub ? props.user.sub : undefined;
-  const deleteNoteCallback = useCallback((e, note_id) => {
-    // Stop click propagation
-    e.stopPropagation();
-
-    // Check if socket is connected, if so, emit delete_note message
-    if (props.socket && props.connected && user_id) {
-      console.log('Sending delete_note request!');
-      props.socket.emit("delete_note", {
-        user_id: user_id,
-        note_id: note_id,
-      });
-    }
-  }, [props.socket, props.connected, user_id]);
 
   // Compile list of notes, updating when profile changes
   useEffect(() => {

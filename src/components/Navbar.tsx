@@ -107,19 +107,11 @@ function Navbar(props: {
   loading: boolean;
   profile: Profile | undefined;
   socket: Socket | undefined;
+  addNoteCallback: () => void;
 }) {
   // Create wrapper to toggle sidebar using setState passed in props
   function toggleSidebar() {
     props.setSidebar(!props.sidebar);
-  }
-
-  // Create addNote function
-  function addNote() {
-    console.log('Hit the add button!');
-    if (props.socket && props.user && props.user.sub && !props.loading) {
-      props.socket.emit("add_note", {user_id: props.user.sub, name: "New Note", data: ""});
-    }
-    return;
   }
 
   // The icon to use for the dropdown button
@@ -158,7 +150,7 @@ function Navbar(props: {
       <Nav>
         <NavLeft>
           <SidebarToggle onClick={toggleSidebar} />
-          <AddNoteButton onClick={addNote} />
+          <AddNoteButton onClick={props.addNoteCallback} />
         </NavLeft>
         <NavCenter>
           <NavImg
