@@ -44,13 +44,14 @@ const { Pool } = require("pg");
 const { checkNewUser } = require(path.join(__dirname, "server_src/auth_checkNewUser.ts"));
 
 // Get addNewNote helper to add a new note to the notes table and return its note_id, or null on failure
-const { addNewNote } = require(path.join(__dirname, "server_src/db_addNewNote.ts"));
+const { addNewNote_client } = require(path.join(__dirname, "server_src/db_addNewNote.ts"));
+
 
 // Get getUID helper to get the u_id of a user from their user_id, or null on failure
-const { getUID } = require(path.join(__dirname, "server_src/auth_getUID.ts"));
+const { getUID, getUID_client } = require(path.join(__dirname, "server_src/auth_getUID.ts"));
 
 // Get getProfile helper to get the profile of a user from their u_id, or null on failure
-const { getProfile } = require(path.join(__dirname, "server_src/auth_getProfile.ts"));
+const { getProfile, getProfile_client } = require(path.join(__dirname, "server_src/auth_getProfile.ts"));
 
 // Setup postgresql connection pool
 const pool = new Pool({
@@ -98,11 +99,17 @@ io.on('connection', (socket) => {
         console.log('Received add_note request!');
         // If payload given, attempt to create new note, give back note_id for new note
         if (msg && msg.name && msg.data !== null && msg.user_id) {
+            // Get connection
+            const client = await pool.connect();
+
             // Insert new note into DB and get its note_id
             const { user_id, name, data } = msg;
-            const u_id = await getUID(user_id, pool);
-            const note_id = await addNewNote(u_id, name, data, pool);
-            const profile = await getProfile(u_id, pool);
+            const u_id = await getUID_client(user_id, client);
+            const note_id = await addNewNote_client(u_id, name, data, client);
+            const profile = await getProfile_client(u_id, client);
+
+            // Close connection
+            client.end();
             
             console.log('Emitting profile_refresh and note_redirect responses!');
             // Return a response message to refresh user profile with new profile
