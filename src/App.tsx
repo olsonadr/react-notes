@@ -39,8 +39,8 @@ function App() {
   useEffect(() => {
     // When socket is created, setup handlers
     if (socket) {
-      // Auth confirmation with profile information
-      socket.on("connected", () => {
+      // On connect handler
+      socket.on("connect", () => {
         console.log("Connected to backend!");
         setConnected(true);
         if (profileRequestSent.current === true) {
