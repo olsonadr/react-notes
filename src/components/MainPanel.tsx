@@ -75,6 +75,7 @@ function MainPanel(props: {
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
   showSaveButton: boolean;
   setShowSaveButton: React.Dispatch<React.SetStateAction<boolean>>;
+  saveCurrNoteCallback: () => void;
 }) {
   // Will be state of the current note when user notes implemented
   const noteSelected: boolean = props.currNote ? true : false;
@@ -97,6 +98,7 @@ function MainPanel(props: {
               setCurrNote={props.setCurrNote}
               showSaveButton={props.showSaveButton}
               setShowSaveButton={props.setShowSaveButton}
+              saveCurrNoteCallback={props.saveCurrNoteCallback}
             />
           )}
         {/* If logged in and profile loaded, but selected note not loaded */}
@@ -160,9 +162,10 @@ function TextEditor(props: {
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
   showSaveButton: boolean;
   setShowSaveButton: React.Dispatch<React.SetStateAction<boolean>>;
+  saveCurrNoteCallback: ()=>void;
 }) {
   // Dereference props for dependency lists
-  const { currNote, setShowSaveButton } = props;
+  const { currNote, showSaveButton, setShowSaveButton, saveCurrNoteCallback } = props;
 
   // Get ref to editor
   const editor = useRef<Editor>(null);
@@ -201,6 +204,21 @@ function TextEditor(props: {
     setFocusCheck(true);
   }, [currNote, loadCurrNote, setShowSaveButton, focusEditor]);
 
+  // Handle keyboard shortcuts
+  // Source: https://holycoders.com/snippets/react-js-detect-save-copy-keyboard-shortcuts/
+  const handleKeyDown = useCallback(
+    (event) => {
+      // Get the key event
+      let charCode = String.fromCharCode(event.which).toLowerCase();
+      // Prevent default and save if needed and if key event was ctrl/meta + s
+      if ((event.ctrlKey || event.metaKey) && charCode === "s") {
+        event.preventDefault();
+        if (showSaveButton) saveCurrNoteCallback();
+      }
+    },
+    [saveCurrNoteCallback, showSaveButton]
+  );
+
   // When content changes, check if the save button should be displayed
   useEffect(() => {
     // Set whether the save button should be visible for this note
@@ -215,8 +233,8 @@ function TextEditor(props: {
       setFocusCheck(false);
       focusEditor();
     }
-  }, [focusCheck, setFocusCheck, focusEditor])
-  
+  }, [focusCheck, setFocusCheck, focusEditor]);
+
   // Custom onChange callback to save content in currNote
   const onEditorChangeCallback = (editorState: EditorState) => {
     setEditorState(editorState);
@@ -249,7 +267,7 @@ function TextEditor(props: {
 
   // Return jsx output for this component
   return (
-    <BoxS>
+    <BoxS onKeyDown={handleKeyDown}>
       <Box m={2}>
         <Box>
           <Paper>

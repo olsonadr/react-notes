@@ -247,6 +247,7 @@ function App() {
           setCurrNote={setCurrNote}
           showSaveButton={showSaveButton}
           setShowSaveButton={setShowSaveButton}
+          saveCurrNoteCallback={saveCurrNoteCallback}
         />
       </AppComp>
     </SocketContext.Provider>
