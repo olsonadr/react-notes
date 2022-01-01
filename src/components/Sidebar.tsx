@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { User } from "@auth0/auth0-react";
 import { FaTrash } from "react-icons/fa";
