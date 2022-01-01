@@ -12,7 +12,7 @@ import { CSSTransition } from "react-transition-group";
 import styled from "@emotion/styled";
 import { FaBars, FaPlus } from "react-icons/fa";
 import { BsPersonCircle } from "react-icons/bs";
-import { AiOutlineInfoCircle } from "react-icons/ai"; 
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import logo from "../img/small_logo.png";
 import { User } from "@auth0/auth0-react";
 import { Profile } from "../interfaces";
@@ -374,6 +374,9 @@ const DropdownItemS = styled.div`
     background-color: var(--bg-bold);
     color: var(--bg-text-bold);
   }
+  &:hover .left-icon {
+    /* background-color: var(--bg-bolder); */
+  }
 `;
 
 // Local DropdownMenu react component
@@ -394,6 +397,7 @@ function DropdownMenu(props: {
   // Establish nodeRef for CSSTransition
   const nodeRefMain: React.MutableRefObject<any> = React.useRef(null);
   const nodeRefSettings: React.MutableRefObject<any> = React.useRef(null);
+  const nodeRefInformation: React.MutableRefObject<any> = React.useRef(null);
 
   // Establish function to get the current menuHeight
   function calcHeight() {
@@ -406,6 +410,12 @@ function DropdownMenu(props: {
     currRef =
       activeMenu === "settings" && nodeRefSettings && nodeRefSettings.current
         ? nodeRefSettings.current
+        : currRef;
+    currRef =
+      activeMenu === "information" &&
+      nodeRefInformation &&
+      nodeRefInformation.current
+        ? nodeRefInformation.current
         : currRef;
     height = currRef ? currRef.offsetHeight : height;
     setMenuHeight(height);
@@ -439,15 +449,21 @@ function DropdownMenu(props: {
               className="menu menu-primary"
               ref={nodeRefMain}
             >
-              <DropdownItem>My Profile</DropdownItem>
-              <DropdownItem
-                leftIcon={<CogIcon />}
-                rightIcon={<ChevronIcon />}
-                goToMenu="settings"
-                setActiveMenu={setActiveMenu}
-              >
-                Settings
-              </DropdownItem>
+              {props.loggedIn && (
+                <>
+                  <DropdownItem leftIcon={<BsPersonCircle />}>
+                    My Profile
+                  </DropdownItem>
+                  <DropdownItem
+                    leftIcon={<CogIcon />}
+                    rightIcon={<ChevronIcon />}
+                    goToMenu="settings"
+                    setActiveMenu={setActiveMenu}
+                  >
+                    Settings
+                  </DropdownItem>
+                </>
+              )}
               <DropdownItem
                 leftIcon={<AiOutlineInfoCircle />}
                 rightIcon={<ChevronIcon />}
@@ -487,12 +503,12 @@ function DropdownMenu(props: {
             unmountOnExit
             timeout={500}
             classNames="menu-secondary"
-            nodeRef={nodeRefSettings}
+            nodeRef={nodeRefInformation}
             onEnter={calcHeight}
           >
             <DropdownTransitionDiv
               className="menu menu-secondary"
-              ref={nodeRefSettings}
+              ref={nodeRefInformation}
             >
               <DropdownItem
                 leftIcon={<ArrowIcon />}
@@ -533,7 +549,9 @@ function DropdownItem(props: {
     >
       {/* <IconButton className="right-bump">{props.leftIcon}</IconButton> */}
       {props.leftIcon ? (
-        <IconButton className="right-bump">{props.leftIcon}</IconButton>
+        <IconButton className="right-bump left-icon">
+          {props.leftIcon}
+        </IconButton>
       ) : (
         <IconButton className="no-bg right-bump"></IconButton>
       )}
@@ -541,7 +559,7 @@ function DropdownItem(props: {
       {props.children}
 
       {props.rightIcon && (
-        <IconButton className="right">{props.rightIcon}</IconButton>
+        <IconButton className="right right-icon">{props.rightIcon}</IconButton>
       )}
     </DropdownItemS>
   );
