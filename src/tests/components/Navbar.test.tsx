@@ -11,6 +11,7 @@ test("Navbar renders without exception", () => {
   const loadingOpt = [true, false];
   const profileOpt = [undefined];
   const socketOpt = [undefined];
+  const addNoteOpt = [()=>{return;}];
   const propCombs = {
     setSidebar: setSidebarOpt,
     sidebar: sidebarOpt,
@@ -19,6 +20,7 @@ test("Navbar renders without exception", () => {
     loading: loadingOpt,
     profile: profileOpt,
     socket: socketOpt,
+    addNoteCallback: addNoteOpt,
   };
 
   // Setup callback to test each combinatio
@@ -33,6 +35,7 @@ test("Navbar renders without exception", () => {
         loading={props.loading}
         profile={props.profile}
         socket={props.socket}
+        addNoteCallback={props.addNoteCallback}
       />,
       div
     );
