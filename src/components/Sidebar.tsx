@@ -71,7 +71,8 @@ const SideButton = styled.li`
   & .trash {
     visibility: hidden;
   }
-  &:hover .trash {
+  &:hover .trash,
+  &.active .trash {
     visibility: visible;
   }
 `;
