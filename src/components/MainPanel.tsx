@@ -191,12 +191,6 @@ function TextEditor(props: {
 
   // When content changes, check if the save button should be displayed
   useEffect(() => {
-    console.log(
-      `Main panel useEffect stuff, newval = ${
-        currNote !== undefined && currNote.data !== currNote.orig_data
-      }`
-    );
-
     // Set whether the save button should be visible for this note
     setShowSaveButton(
       currNote !== undefined && currNote.data !== currNote.orig_data
