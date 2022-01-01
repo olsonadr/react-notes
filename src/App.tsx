@@ -21,7 +21,7 @@ const AppComp = styled.div`
 // Exported App react component
 function App() {
   // States of App
-  const [sidebar, setSidebar] = useState(true);
+  const [sidebar, setSidebar] = useState(false);
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [currNote, setCurrNote] = useState<Note | undefined>(undefined);
   const { user, isAuthenticated, isLoading } = useAuth0();

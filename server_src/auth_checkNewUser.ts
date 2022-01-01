@@ -46,8 +46,11 @@ exports.checkNewUser_client = async (email, name, picture, user_id, client, getU
     let u_id = undefined;
     if (res) u_id = res;
 
+    console.log(res);
+
     // If res.rowCount is 0 (id not found), this is new user, add to table
-    if (res && res.rowCount === 0 && !u_id) {
+    if (!u_id) {
+        
         // Execute query to add user
         res = undefined;
         try {
