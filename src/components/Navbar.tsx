@@ -12,12 +12,14 @@ import { CSSTransition } from "react-transition-group";
 import styled from "@emotion/styled";
 import { FaBars, FaPlus } from "react-icons/fa";
 import { BsPersonCircle } from "react-icons/bs";
+import { AiOutlineInfoCircle } from "react-icons/ai"; 
 import logo from "../img/small_logo.png";
 import { User } from "@auth0/auth0-react";
 import { Profile } from "../interfaces";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
 import { Socket } from "socket.io-client";
+import { Link } from "react-router-dom";
 
 // Create styled components for the Navbar (emotion.js)
 const Nav = styled.nav`
@@ -446,6 +448,14 @@ function DropdownMenu(props: {
               >
                 Settings
               </DropdownItem>
+              <DropdownItem
+                leftIcon={<AiOutlineInfoCircle />}
+                rightIcon={<ChevronIcon />}
+                goToMenu="information"
+                setActiveMenu={setActiveMenu}
+              >
+                Information
+              </DropdownItem>
               {LogInOutButton}
             </DropdownTransitionDiv>
           </CSSTransition>
@@ -469,6 +479,32 @@ function DropdownMenu(props: {
               ></DropdownItem>
               <DropdownItem>Setting 1</DropdownItem>
               <DropdownItem>Setting 2</DropdownItem>
+            </DropdownTransitionDiv>
+          </CSSTransition>
+
+          <CSSTransition
+            in={activeMenu === "information"}
+            unmountOnExit
+            timeout={500}
+            classNames="menu-secondary"
+            nodeRef={nodeRefSettings}
+            onEnter={calcHeight}
+          >
+            <DropdownTransitionDiv
+              className="menu menu-secondary"
+              ref={nodeRefSettings}
+            >
+              <DropdownItem
+                leftIcon={<ArrowIcon />}
+                goToMenu="main"
+                setActiveMenu={setActiveMenu}
+              ></DropdownItem>
+              <Link to={"/docs/privacy"}>
+                <DropdownItem>Privacy Policy</DropdownItem>
+              </Link>
+              <Link to={"/docs/tos"}>
+                <DropdownItem>Terms of Service</DropdownItem>
+              </Link>
             </DropdownTransitionDiv>
           </CSSTransition>
         </DropdownS>
