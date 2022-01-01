@@ -112,6 +112,7 @@ function App() {
             recv.current["profile_request"] = true;
             retry.current["profile_request"] = false;
             setProfile(msg);
+            setSidebar(true);
           }
         );
         sent.current["profile_request"] = true;
