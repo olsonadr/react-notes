@@ -73,6 +73,8 @@ function MainPanel(props: {
   profile: Profile | undefined;
   currNote: Note | undefined;
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
+  showSaveButton: boolean;
+  setShowSaveButton: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   // Will be state of the current note when user notes implemented
   const noteSelected: boolean = props.currNote ? true : false;
@@ -93,6 +95,8 @@ function MainPanel(props: {
             <TextEditor
               currNote={props.currNote}
               setCurrNote={props.setCurrNote}
+              showSaveButton={props.showSaveButton}
+              setShowSaveButton={props.setShowSaveButton}
             />
           )}
         {/* If logged in and profile loaded, but selected note not loaded */}
@@ -154,33 +158,33 @@ const BoxS = styled(Box)`
 function TextEditor(props: {
   currNote: Note | undefined;
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
+  showSaveButton: boolean;
+  setShowSaveButton: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  // Dereference props for dependency lists
+  const { currNote, setShowSaveButton } = props;
+
   // Get ref to editor
   const editor = useRef<Editor>(null);
+  const focus = useRef<boolean>(false);
+  const [focusCheck, setFocusCheck] = useState<boolean>(false);
 
   // Callback for setting editor state on note load
-  const loadCurrNote = useCallback(
-    () => {
-      return EditorState.createWithContent(
-        ContentState.createFromText(
-          props.currNote && props.currNote.data ? props.currNote.data : ""
-        ),
-        // EditorState.createEmpty(
-        new CompositeDecorator([
-          { strategy: linkStrategy, component: DecoratedLink },
-        ])
-      );
-    },
-    [props.currNote],
-  )
+  const loadCurrNote = useCallback(() => {
+    // Return state for this note
+    return EditorState.createWithContent(
+      ContentState.createFromText(
+        props.currNote && props.currNote.data ? props.currNote.data : ""
+      ),
+      // EditorState.createEmpty(
+      new CompositeDecorator([
+        { strategy: linkStrategy, component: DecoratedLink },
+      ])
+    );
+  }, [props.currNote]);
 
   // State of editor
   const [editorState, setEditorState] = useState<EditorState>(loadCurrNote);
-
-  // When note changes, change editor state
-  useEffect(() => {
-    setEditorState(loadCurrNote());
-  }, [props.currNote, loadCurrNote]);
 
   // Focus editor callback
   const focusEditor = React.useCallback(() => {
@@ -188,6 +192,42 @@ function TextEditor(props: {
       editor.current.focus();
     }
   }, [editor]);
+
+  // When note changes, change editor state
+  useEffect(() => {
+    // Get currNote's data into text editor
+    setEditorState(loadCurrNote());
+    focus.current = true;
+    setFocusCheck(true);
+  }, [currNote, loadCurrNote, setShowSaveButton, focusEditor]);
+
+  // When content changes, check if the save button should be displayed
+  useEffect(() => {
+    // Set whether the save button should be visible for this note
+    setShowSaveButton(
+      currNote !== undefined && currNote.data !== currNote.orig_data
+    );
+  }, [currNote, setShowSaveButton, editorState]);
+
+  // Focus if requested before render
+  useEffect(() => {
+    if (focusCheck) {
+      setFocusCheck(false);
+      focusEditor();
+    }
+  }, [focusCheck, setFocusCheck, focusEditor])
+  
+  // Custom onChange callback to save content in currNote
+  const onEditorChangeCallback = (editorState: EditorState) => {
+    setEditorState(editorState);
+    if (props.currNote) {
+      const currData = editorState.getCurrentContent().getPlainText();
+      if (!props.showSaveButton) {
+        props.setShowSaveButton(props.currNote.data !== currData);
+      }
+      props.currNote.data = currData;
+    }
+  };
 
   // Render block callback
   const renderBlock = (contentBlock: ContentBlock) => {
@@ -218,7 +258,7 @@ function TextEditor(props: {
               <EditorContext.Provider value={editorState}>
                 <Editor
                   editorState={editorState}
-                  onChange={setEditorState}
+                  onChange={onEditorChangeCallback}
                   placeholder="Click here to start typing in the editor..."
                   blockRendererFn={renderBlock}
                   ref={editor}

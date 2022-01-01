@@ -53,6 +53,9 @@ const NavRight = styled.div`
   flex: 0 1 auto;
   position: absolute;
   right: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const SidebarToggle = styled(FaBars)`
@@ -75,6 +78,22 @@ const AddNoteButton = styled(FaPlus)`
   background-color: var(--bg);
   &:hover {
     background-color: var(--bg-bold);
+  }
+`;
+
+const SaveNoteButton = styled.button`
+  background-color: var(--blue);
+  color: var(--bg-text);
+  width: 80px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  margin-right: 1rem;
+  transition: background-color var(--speed) ease-in, color var(--speed) ease-in;
+  /* Hover background if requested */
+  &:hover {
+    background-color: var(--blue-bold);
+    color: var(--bg-text-bold);
   }
 `;
 
@@ -108,6 +127,8 @@ function Navbar(props: {
   profile: Profile | undefined;
   socket: Socket | undefined;
   addNoteCallback: () => void;
+  saveCurrNoteCallback: () => void;
+  showSaveButton: boolean;
 }) {
   // Create wrapper to toggle sidebar using setState passed in props
   function toggleSidebar() {
@@ -116,7 +137,6 @@ function Navbar(props: {
 
   // The icon to use for the dropdown button
   const [dropdownImgReady, setDropdownImgReady] = useState(false);
-
   useEffect(() => {
     if (props.profile && props.profile.picture) {
       const img = new Image();
@@ -145,6 +165,7 @@ function Navbar(props: {
     e.preventDefault();
   };
 
+  // Return the navbar's JSX
   return (
     <>
       <Nav>
@@ -160,6 +181,11 @@ function Navbar(props: {
           />
         </NavCenter>
         <NavRight>
+          {props.showSaveButton && (
+            <SaveNoteButton onClick={props.saveCurrNoteCallback}>
+              Save
+            </SaveNoteButton>
+          )}
           <NavItemS className="hover-on" icon={dropdownIcon}>
             <DropdownMenu loggedIn={loggedIn}></DropdownMenu>
           </NavItemS>

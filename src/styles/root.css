@@ -22,12 +22,15 @@
   --nav-button-size: calc(var(--nav-button-ratio)*var(--nav-height));
   --nav-dd-button-height: 40px;
   --nav-dd-button-padding: 0.5rem;
-  --sidebar-width: 250px;
+  --sidebar-width: 200px;
   --sidebar-padding: 5px;
   --sidebar-in-time: 300ms;
   --sidebar-out-time: 300ms;
   --dropdown-width: 270px;
   --dropdown-padding: 1rem;
+
+  --blue: rgb(0, 67, 143);
+  --blue-bold: rgb(1, 88, 187);
 
   --border: 1px solid var(--bg-bold);
   --border-radius: 8px;
