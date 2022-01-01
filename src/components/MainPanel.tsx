@@ -166,9 +166,12 @@ function TextEditor(props: {
 
   // Get ref to editor
   const editor = useRef<Editor>(null);
+  const focus = useRef<boolean>(false);
+  const [focusCheck, setFocusCheck] = useState<boolean>(false);
 
   // Callback for setting editor state on note load
   const loadCurrNote = useCallback(() => {
+    // Return state for this note
     return EditorState.createWithContent(
       ContentState.createFromText(
         props.currNote && props.currNote.data ? props.currNote.data : ""
@@ -194,8 +197,8 @@ function TextEditor(props: {
   useEffect(() => {
     // Get currNote's data into text editor
     setEditorState(loadCurrNote());
-    // Give editor the focus
-    focusEditor();
+    focus.current = true;
+    setFocusCheck(true);
   }, [currNote, loadCurrNote, setShowSaveButton, focusEditor]);
 
   // When content changes, check if the save button should be displayed
@@ -206,6 +209,16 @@ function TextEditor(props: {
     );
   }, [currNote, setShowSaveButton, editorState]);
 
+  // Focus if requested before render
+  useEffect(() => {
+    console.log(`effect focus ${focus.current.toString()}`);
+    
+    if (focusCheck) {
+      setFocusCheck(false);
+      focusEditor();
+    }
+  }, [focusCheck, setFocusCheck, focusEditor])
+  
   // Custom onChange callback to save content in currNote
   const onEditorChangeCallback = (editorState: EditorState) => {
     setEditorState(editorState);
