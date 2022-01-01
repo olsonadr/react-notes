@@ -28,7 +28,6 @@ exports.addNewNote_client = async (u_id, name, data, client) => {
         res = await client.query(selquery);
     } catch (err) {
         console.error(err.stack);
-        client.end();
         return;
     }
 

@@ -49,6 +49,9 @@ const { addNewNote_client } = require(path.join(__dirname, "server_src/db_addNew
 // Get deleteNote helper to delete a note from the notes table
 const { deleteNote_client } = require(path.join(__dirname, "server_src/db_deleteNote.ts"));
 
+// Get saveNote helper to update a note in the notes table with new info
+const { saveNote_client } = require(path.join(__dirname, "server_src/db_saveNote.ts"));
+
 // Get getUID helper to get the u_id of a user from their user_id, or null on failure
 const { getUID_client } = require(path.join(__dirname, "server_src/auth_getUID.ts"));
 
@@ -153,6 +156,28 @@ io.on('connection', async (socket) => {
                 // Return a response message to refresh user profile with new profile
                 console.log('Emitting profile_refresh responses!');
                 ack(profile);
+            });
+        }
+    });
+
+    // Handler for request to save the current note on client
+    socket.on('save_note', async (msg, ack) => {
+        console.log('Received delete_note request!');
+        // If payload given, attempt to delete note
+        if (msg && msg.user_id && msg.note_id && msg.name && msg.data) {
+            // Get connection
+            await pool.connect(async (err, client, done) => {
+                // Remove note from DB
+                const { user_id, note_id, name, data } = msg;
+                const u_id = await getUID_client(user_id, client);
+                await saveNote_client(u_id, note_id, name, data, client);
+
+                // Close connection
+                done();
+
+                // Return a response message to refresh user profile with new profile
+                console.log('Acking successful note save!');
+                ack();
             });
         }
     });

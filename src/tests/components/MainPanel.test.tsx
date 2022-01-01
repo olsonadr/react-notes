@@ -12,6 +12,8 @@ test("MainPanel renders without exception", () => {
   const socketOpt = [undefined];
   const profileOpt = [undefined];
   const setCurrNoteOpt = [() => {}];
+  const showSaveButtonOpt = [true, false];
+  const setShowSaveButtonOpt = [()=>{}];
   const currNoteOpt = [
     undefined,
     { note_id: 2, name: "new note", data: "contents!" },
@@ -26,6 +28,8 @@ test("MainPanel renders without exception", () => {
     profile: profileOpt,
     currNote: currNoteOpt,
     setCurrNote: setCurrNoteOpt,
+    showSaveButton: showSaveButtonOpt,
+    setShowSaveButton: setShowSaveButtonOpt,
   };
 
   // Setup callback to test each combinatio
@@ -40,8 +44,10 @@ test("MainPanel renders without exception", () => {
         loading={props.loading}
         socket={props.socket}
         profile={props.profile}
-        setCurrNote={props.setCurrNoteOpt}
-        currNote={props.currNoteOpt}
+        setCurrNote={props.setCurrNote}
+        currNote={props.currNote}
+        showSaveButton={props.showSaveButton}
+        setShowSaveButton={props.setShowSaveButton}
       />,
       div
     );

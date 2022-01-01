@@ -23,7 +23,6 @@ exports.deleteNote_client = async (u_id, note_id, client) => {
         await client.query(selquery);
     } catch (err) {
         console.error(err.stack);
-        client.end();
         return;
     }
 

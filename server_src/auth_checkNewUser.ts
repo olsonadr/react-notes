@@ -56,7 +56,6 @@ exports.checkNewUser_client = async (email, name, picture, user_id, client, getU
             // } catch (err:any) {
         } catch (err) {
             console.error(err.stack);
-            client.end();
             return; // redirect to error page
         }
 
