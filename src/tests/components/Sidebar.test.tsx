@@ -13,6 +13,7 @@ test("Sidebar renders without exception", () => {
   const profileOpt = [undefined];
   const setCurrNoteOpt = [() => {}];
   const deleteNoteCallbackOpt = [(a:any, b:any) => {}];
+  const showSaveButtonOpt = [true, false];
   const currNoteOpt = [
     undefined,
     { note_id: 2, name: "new note", data: "contents!" },
@@ -28,6 +29,7 @@ test("Sidebar renders without exception", () => {
     setCurrNote: setCurrNoteOpt,
     socket: socketOpt,
     deleteNoteCallback: deleteNoteCallbackOpt,
+    showSaveButton: showSaveButtonOpt,
   };
 
   // Setup callback to test each combinatio
@@ -45,6 +47,7 @@ test("Sidebar renders without exception", () => {
         currNote={props.currNoteOpt}
         socket={props.socket}
         deleteNoteCallback={props.deleteNoteCallback}
+        showSaveButton={props.showSaveButton}
       />,
       div
     );

@@ -37,18 +37,36 @@ const SideButton = styled.li`
   padding-bottom: 0.5rem;
   border-radius: 5px;
   width: var(--sidebar-width);
-  text-align: center;
+  /* text-align: center; */
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
+  justify-content: left;
+  /* position: absolute; */
   align-content: center;
   &:hover {
     background-color: var(--bg-bold);
     color: var(--bg-text-bold);
     cursor: pointer;
   }
-  &.active, &#active {
+  &.active,
+  &#active {
     background-color: var(--bg-bold);
     color: var(--bg-text-bold);
+  }
+  &::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: var(--bg-bolder);
+    visibility: hidden;
+    filter: brightness(200%);
+    border-radius: 50%;
+    align-self: center;
+    margin-left: 0.75rem;
+    margin-right: 0.75rem;
+  }
+  &.altered::before {
+    visibility: visible;
   }
   & .trash {
     visibility: hidden;
@@ -87,30 +105,47 @@ function Sidebar(props: {
   currNote: Note | undefined;
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
   deleteNoteCallback: (e: any, note_id: any) => void;
+  showSaveButton: boolean;
 }) {
   // Destructure props that will be used in dependency lists
-  const { profile, currNote, setCurrNote, deleteNoteCallback } = props;
+  const { profile, currNote, setCurrNote, deleteNoteCallback, showSaveButton } = props;
 
   // useState hook to track the list of notes JSX elements
   const [notesList, setNotesList] = useState<JSX.Element[]>([]);
 
   // Establish callback to pass to currNote to auto scroll to it
-  const currNoteScrollCallbackRef = useCallback( (domNode) => {
+  const currNoteScrollCallbackRef = useCallback((domNode) => {
     if (domNode) {
       domNode.scrollIntoView({ behavior: "smooth" });
     }
-  },[]);
+  }, []);
 
   // Compile list of notes, updating when profile changes
   useEffect(() => {
     if (profile && profile.notes) {
       let tempNotesList: JSX.Element[] = [];
       profile.notes.forEach(
-        (note: { note_id: number; name: string; data: string; orig_data: string }) => {
+        (note: {
+          note_id: number;
+          name: string;
+          data: string;
+          orig_data: string;
+        }) => {
+          // Establish classList
+          let classList = "";
+          // If active note, add "active" class
+          classList = classList.concat(
+            currNote && note.note_id === currNote.note_id ? "active" : ""
+          );
+          // If active note, add "active" class
+          classList = classList.concat(
+            note.data !== note.orig_data ? " altered" : ""
+          );
+          // Add the button to the temp list
           tempNotesList = tempNotesList.concat(
             <SideButton
               // id={currNote && note.note_id === currNote.note_id ? "active" : ""}
-              className={currNote && note.note_id === currNote.note_id ? "active" : ""}
+              className={classList}
               key={note.note_id}
               ref={
                 currNote && note.note_id === currNote.note_id
@@ -133,12 +168,22 @@ function Sidebar(props: {
       );
       setNotesList(tempNotesList);
     }
-  }, [profile, setCurrNote, currNote, deleteNoteCallback, currNoteScrollCallbackRef]);
+  }, [
+    profile,
+    setCurrNote,
+    currNote,
+    deleteNoteCallback,
+    currNoteScrollCallbackRef,
+    showSaveButton
+  ]);
 
   // Return jsx for component
   return (
     <>
-      <Side id="sidebar-button-list" className={props.sidebar ? "side-active" : ""}>
+      <Side
+        id="sidebar-button-list"
+        className={props.sidebar ? "side-active" : ""}
+      >
         <SideButtonList>{notesList}</SideButtonList>
       </Side>
     </>

@@ -232,6 +232,7 @@ function App() {
           currNote={currNote}
           setCurrNote={setCurrNote}
           deleteNoteCallback={deleteNoteCallback}
+          showSaveButton={showSaveButton}
         />
         <MainPanel
           setSidebar={setSidebar}
