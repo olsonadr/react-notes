@@ -162,7 +162,7 @@ function TextEditor(props: {
   setShowSaveButton: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   // Dereference props for dependency lists
-  const {currNote, setShowSaveButton} = props;
+  const { currNote, setShowSaveButton } = props;
 
   // Get ref to editor
   const editor = useRef<Editor>(null);
@@ -183,20 +183,6 @@ function TextEditor(props: {
   // State of editor
   const [editorState, setEditorState] = useState<EditorState>(loadCurrNote);
 
-  // When note changes, change editor state
-  useEffect(() => {
-    // Get currNote's data into text editor
-    setEditorState(loadCurrNote());
-  }, [currNote, loadCurrNote, setShowSaveButton]);
-
-  // When content changes, check if the save button should be displayed
-  useEffect(() => {
-    // Set whether the save button should be visible for this note
-    setShowSaveButton(
-      currNote !== undefined && currNote.data !== currNote.orig_data
-    );
-  }, [currNote, setShowSaveButton, editorState])
-
   // Focus editor callback
   const focusEditor = React.useCallback(() => {
     if (editor.current) {
@@ -204,8 +190,24 @@ function TextEditor(props: {
     }
   }, [editor]);
 
+  // When note changes, change editor state
+  useEffect(() => {
+    // Get currNote's data into text editor
+    setEditorState(loadCurrNote());
+    // Give editor the focus
+    focusEditor();
+  }, [currNote, loadCurrNote, setShowSaveButton, focusEditor]);
+
+  // When content changes, check if the save button should be displayed
+  useEffect(() => {
+    // Set whether the save button should be visible for this note
+    setShowSaveButton(
+      currNote !== undefined && currNote.data !== currNote.orig_data
+    );
+  }, [currNote, setShowSaveButton, editorState]);
+
   // Custom onChange callback to save content in currNote
-  const onEditorChangeCallback = (editorState:EditorState) => {
+  const onEditorChangeCallback = (editorState: EditorState) => {
     setEditorState(editorState);
     if (props.currNote) {
       const currData = editorState.getCurrentContent().getPlainText();
