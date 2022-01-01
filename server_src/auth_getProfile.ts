@@ -59,7 +59,6 @@ exports.getProfile_client = async (u_id, client) => {
         }
     } catch (err) {
         console.error(err.stack);
-        client.end();
         return;
     }
 
