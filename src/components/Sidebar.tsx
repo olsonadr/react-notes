@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { User } from "@auth0/auth0-react";
-import { Profile } from "../interfaces";
+import { FaTrash } from "react-icons/fa";
+import { Profile, Note } from "../interfaces";
+import { Socket } from "socket.io-client";
 
 // Create styled components for the navbar (emotion.js)
 const Side = styled.div`
@@ -36,15 +38,42 @@ const SideButton = styled.li`
   border-radius: 5px;
   width: var(--sidebar-width);
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
   &:hover {
     background-color: var(--bg-bold);
     color: var(--bg-text-bold);
     cursor: pointer;
   }
+  &.active, &#active {
+    background-color: var(--bg-bold);
+    color: var(--bg-text-bold);
+  }
+  & .trash {
+    visibility: hidden;
+  }
+  &:hover .trash {
+    visibility: visible;
+  }
 `;
 
-const SideButtonList = styled.ul`
+const SideDeleteButton = styled(FaTrash)`
+  font-size: 1rem;
+  padding: 0.1rem;
+  margin-right: 0.25rem;
+  justify-self: right;
+  cursor: pointer;
+  flex: 0 1 auto;
+  position: absolute;
+  right: 0.5rem;
+  color: var(--bg-text-light);
+  &:hover {
+    color: var(--bg-text-bold);
+  }
 `;
+
+const SideButtonList = styled.ul``;
 
 // Exported Sidebar react component
 function Sidebar(props: {
@@ -53,19 +82,64 @@ function Sidebar(props: {
   user: User | undefined;
   auth: boolean;
   loading: boolean;
+  socket: Socket | undefined;
   profile: Profile | undefined;
+  currNote: Note | undefined;
+  setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
+  deleteNoteCallback: (e: any, note_id: any) => void;
 }) {
+  // Destructure props that will be used in dependency lists
+  const { profile, currNote, setCurrNote, deleteNoteCallback } = props;
+
+  // useState hook to track the list of notes JSX elements
+  const [notesList, setNotesList] = useState<JSX.Element[]>([]);
+
+  // Establish callback to pass to currNote to auto scroll to it
+  const currNoteScrollCallbackRef = useCallback( (domNode) => {
+    if (domNode) {
+      domNode.scrollIntoView({ behavior: "smooth" });
+    }
+  },[]);
+
+  // Compile list of notes, updating when profile changes
+  useEffect(() => {
+    if (profile && profile.notes) {
+      let tempNotesList: JSX.Element[] = [];
+      profile.notes.forEach(
+        (note: { note_id: number; name: string; data: string }) => {
+          tempNotesList = tempNotesList.concat(
+            <SideButton
+              // id={currNote && note.note_id === currNote.note_id ? "active" : ""}
+              className={currNote && note.note_id === currNote.note_id ? "active" : ""}
+              key={note.note_id}
+              ref={
+                currNote && note.note_id === currNote.note_id
+                  ? currNoteScrollCallbackRef
+                  : null
+              }
+              onClick={() => {
+                setCurrNote(note);
+              }}
+            >
+              <p>{note.name}</p>
+              <SideDeleteButton
+                key={note.note_id}
+                className="trash"
+                onClick={(e) => deleteNoteCallback(e, note.note_id)}
+              />
+            </SideButton>
+          );
+        }
+      );
+      setNotesList(tempNotesList);
+    }
+  }, [profile, setCurrNote, currNote, deleteNoteCallback, currNoteScrollCallbackRef]);
+
   // Return jsx for component
   return (
     <>
-      <Side className={props.sidebar ? "side-active" : ""}>
-        <SideButtonList>
-          <SideButton>Item 1</SideButton>
-          <SideButton>Item 2</SideButton>
-          <SideButton>Item 3</SideButton>
-          <SideButton>Item 4</SideButton>
-          <SideButton>Item 5</SideButton>
-        </SideButtonList>
+      <Side id="sidebar-button-list" className={props.sidebar ? "side-active" : ""}>
+        <SideButtonList>{notesList}</SideButtonList>
       </Side>
     </>
   );

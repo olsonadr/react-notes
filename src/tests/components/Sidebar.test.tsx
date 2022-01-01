@@ -9,7 +9,14 @@ test("Sidebar renders without exception", () => {
   const userOpt = [undefined];
   const authOpt = [true, false];
   const loadingOpt = [true, false];
+  const socketOpt = [undefined];
   const profileOpt = [undefined];
+  const setCurrNoteOpt = [() => {}];
+  const deleteNoteCallbackOpt = [(a:any, b:any) => {}];
+  const currNoteOpt = [
+    undefined,
+    { note_id: 2, name: "new note", data: "contents!" },
+  ];
   const propCombs = {
     setSidebar: setSidebarOpt,
     sidebar: sidebarOpt,
@@ -17,6 +24,10 @@ test("Sidebar renders without exception", () => {
     auth: authOpt,
     loading: loadingOpt,
     profile: profileOpt,
+    currNote: currNoteOpt,
+    setCurrNote: setCurrNoteOpt,
+    socket: socketOpt,
+    deleteNoteCallback: deleteNoteCallbackOpt,
   };
 
   // Setup callback to test each combinatio
@@ -30,6 +41,10 @@ test("Sidebar renders without exception", () => {
         auth={props.auth}
         loading={props.loading}
         profile={props.profile}
+        setCurrNote={props.setCurrNoteOpt}
+        currNote={props.currNoteOpt}
+        socket={props.socket}
+        deleteNoteCallback={props.deleteNoteCallback}
       />,
       div
     );

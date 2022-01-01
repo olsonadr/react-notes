@@ -6,7 +6,6 @@ This is a simple note-taking app that is planned to allow each logged-in user to
  - **REACT_APP_AUTH0_DOMAIN** = the Domain for the Auth0 application
  - **REACT_APP_AUTH0_CLIENT_ID** = the Client ID for the Auth0 application
  - **PORT** = the port on which express should serve the compiled, static React app
- - **REACT_APP_PORT** = the port on which the Socket.io demon can be reached from the client (should be same as the express serving)
  - **DATABASE_URL_DEV** = for development, used in place of DATABASE_URL (that is set by Heroku or manually for pointing to the PostgreSQL database in production)
 
 ## Available Scripts
