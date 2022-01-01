@@ -11,4 +11,5 @@ export interface Note {
   note_id: number;
   name: string;
   data: string;
+  orig_data: string;
 }

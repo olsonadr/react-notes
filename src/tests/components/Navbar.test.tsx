@@ -12,6 +12,8 @@ test("Navbar renders without exception", () => {
   const profileOpt = [undefined];
   const socketOpt = [undefined];
   const addNoteOpt = [()=>{return;}];
+  const saveCurrNoteCallbackOpt = [()=>{return;}];
+  const showSaveButtonOpt = [false, true];
   const propCombs = {
     setSidebar: setSidebarOpt,
     sidebar: sidebarOpt,
@@ -21,6 +23,8 @@ test("Navbar renders without exception", () => {
     profile: profileOpt,
     socket: socketOpt,
     addNoteCallback: addNoteOpt,
+    saveCurrNoteCallback: saveCurrNoteCallbackOpt,
+    showSaveButton: showSaveButtonOpt,
   };
 
   // Setup callback to test each combinatio
@@ -36,6 +40,8 @@ test("Navbar renders without exception", () => {
         profile={props.profile}
         socket={props.socket}
         addNoteCallback={props.addNoteCallback}
+        saveCurrNoteCallback={props.saveCurrNoteCallback}
+        showSaveButton={props.showSaveButton}
       />,
       div
     );

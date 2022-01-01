@@ -29,6 +29,9 @@
   --dropdown-width: 270px;
   --dropdown-padding: 1rem;
 
+  --blue: rgb(0, 67, 143);
+  --blue-bold: rgb(1, 88, 187);
+
   --border: 1px solid var(--bg-bold);
   --border-radius: 8px;
   --speed: 200ms;

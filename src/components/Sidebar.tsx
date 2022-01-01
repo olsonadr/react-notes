@@ -106,7 +106,7 @@ function Sidebar(props: {
     if (profile && profile.notes) {
       let tempNotesList: JSX.Element[] = [];
       profile.notes.forEach(
-        (note: { note_id: number; name: string; data: string }) => {
+        (note: { note_id: number; name: string; data: string; orig_data: string }) => {
           tempNotesList = tempNotesList.concat(
             <SideButton
               // id={currNote && note.note_id === currNote.note_id ? "active" : ""}

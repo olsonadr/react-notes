@@ -30,6 +30,7 @@ function App() {
   const sent: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
   const recv: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
   const retry: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
+  const [showSaveButton, setShowSaveButton] = useState(false);
   const sConnected = useRef(false);
 
   // Connect to socket using Socket react context
@@ -125,33 +126,30 @@ function App() {
   }, [socket, isAuthenticated, user, sConnected]);
 
   // Create addNoteCallback function for children to use when adding a new note
-  const addNoteCallback = useCallback(
-    () => {
-      // console.log("Hit the add button!");
-      if (socket && user && user.sub && !isLoading) {
-        socket.emit(
-          "add_note",
-          { user_id: user.sub, name: "New Note", data: "" },
-          (profile: Profile, note_id: number) => {
-            // ack function, load the returned profile and redirect to the returned note
-            // console.log(`Received profile refresh and note redirect request for note ${note_id}!`);
-            setProfile(profile);
-            if (profile && profile.notes) {
-              let notes_with_id = profile.notes.filter((obj) => {
-                return obj.note_id === note_id;
-              });
-              if (notes_with_id && notes_with_id.length > 0) {
-                setCurrNote(notes_with_id[0]);
-              }
+  const addNoteCallback = useCallback(() => {
+    // console.log("Hit the add button!");
+    if (socket && user && user.sub && !isLoading) {
+      socket.emit(
+        "add_note",
+        { user_id: user.sub, name: "New Note", data: "" },
+        (profile: Profile, note_id: number) => {
+          // ack function, load the returned profile and redirect to the returned note
+          // console.log(`Received profile refresh and note redirect request for note ${note_id}!`);
+          setProfile(profile);
+          if (profile && profile.notes) {
+            let notes_with_id = profile.notes.filter((obj) => {
+              return obj.note_id === note_id;
+            });
+            if (notes_with_id && notes_with_id.length > 0) {
+              setCurrNote(notes_with_id[0]);
             }
           }
-        );
-      }
-      return;
-    },
-    [isLoading, socket, user],
-  )
-  
+        }
+      );
+    }
+    return;
+  }, [isLoading, socket, user]);
+
   // Setup deleteNoteCallback that can be used by child components
   const deleteNoteCallback = useCallback(
     (e, note_id) => {
@@ -176,7 +174,11 @@ function App() {
               let notes_with_id = profile.notes.filter((obj) => {
                 return obj.note_id === note_id;
               });
-              if (notes_with_id && notes_with_id.length > 0 && currNote === notes_with_id[0]) {
+              if (
+                notes_with_id &&
+                notes_with_id.length > 0 &&
+                currNote === notes_with_id[0]
+              ) {
                 setCurrNote(undefined);
               }
             }
@@ -186,6 +188,22 @@ function App() {
     },
     [socket, sConnected, user, currNote, profile]
   );
+
+  // Create addNoteCallback function for children to use when adding a new note
+  const saveCurrNoteCallback = useCallback(() => {
+    if (socket && user && user.sub && !isLoading && currNote) {
+      socket.emit(
+        "save_note",
+        { user_id: user.sub, name: currNote.name, data: currNote.data, note_id: currNote.note_id },
+        () => {
+          // ack function, save was successful, update currNote with its new data
+          currNote.orig_data = currNote.data;
+          setShowSaveButton(false);
+        }
+      );
+    }
+    return;
+  }, [isLoading, socket, user, currNote]);
 
   // Return App component jsx
   return (
@@ -200,6 +218,8 @@ function App() {
           profile={profile}
           socket={socket}
           addNoteCallback={addNoteCallback}
+          saveCurrNoteCallback={saveCurrNoteCallback}
+          showSaveButton={showSaveButton}
         />
         <Sidebar
           setSidebar={setSidebar}
@@ -223,6 +243,8 @@ function App() {
           profile={profile}
           currNote={currNote}
           setCurrNote={setCurrNote}
+          showSaveButton={showSaveButton}
+          setShowSaveButton={setShowSaveButton}
         />
       </AppComp>
     </SocketContext.Provider>

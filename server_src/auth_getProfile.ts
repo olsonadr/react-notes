@@ -32,6 +32,13 @@ exports.getProfile = async (u_id, pool) => {
     // Close client connection
     client.end();
 
+    // Add orig_data field to each note
+    if (data && data.notes) {
+        data.notes.forEach(note => {
+            note.orig_data = note.data;
+        });
+    }
+
     // Return result (object filled with user info)
     return data;
 };
@@ -60,6 +67,13 @@ exports.getProfile_client = async (u_id, client) => {
     } catch (err) {
         console.error(err.stack);
         return;
+    }
+
+    // Add orig_data field to each note
+    if (data && data.notes) {
+        data.notes.forEach(note => {
+            note.orig_data = note.data;
+        });
     }
 
     // Return result (object filled with user info)
