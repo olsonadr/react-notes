@@ -83,7 +83,7 @@ const AddNoteButton = styled(FaPlus)`
 
 const SaveNoteButton = styled.button`
   background-color: var(--blue);
-  color: var(--bg-text);
+  color: var(--bg-text-bold);
   width: 80px;
   height: 40px;
   border: none;
