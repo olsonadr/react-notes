@@ -394,6 +394,7 @@ function DropdownMenu(props: {
   // Establish nodeRef for CSSTransition
   const nodeRefMain: React.MutableRefObject<any> = React.useRef(null);
   const nodeRefSettings: React.MutableRefObject<any> = React.useRef(null);
+  const nodeRefInformation: React.MutableRefObject<any> = React.useRef(null);
 
   // Establish function to get the current menuHeight
   function calcHeight() {
@@ -406,6 +407,10 @@ function DropdownMenu(props: {
     currRef =
       activeMenu === "settings" && nodeRefSettings && nodeRefSettings.current
         ? nodeRefSettings.current
+        : currRef;
+    currRef =
+      activeMenu === "information" && nodeRefInformation && nodeRefInformation.current
+        ? nodeRefInformation.current
         : currRef;
     height = currRef ? currRef.offsetHeight : height;
     setMenuHeight(height);
@@ -487,12 +492,12 @@ function DropdownMenu(props: {
             unmountOnExit
             timeout={500}
             classNames="menu-secondary"
-            nodeRef={nodeRefSettings}
+            nodeRef={nodeRefInformation}
             onEnter={calcHeight}
           >
             <DropdownTransitionDiv
               className="menu menu-secondary"
-              ref={nodeRefSettings}
+              ref={nodeRefInformation}
             >
               <DropdownItem
                 leftIcon={<ArrowIcon />}
