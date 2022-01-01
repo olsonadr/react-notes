@@ -2,7 +2,7 @@
 -- Write-able transaction
 set transaction read write; 
 -- Delete if exists
--- DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users;
 -- Create users table
 CREATE TABLE users (
     u_id SERIAL UNIQUE NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE users (
 
 -- -- Initialization of notes table for react-notes app
 -- Delete if exists
--- DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS notes;
 -- Create notes table
 CREATE TABLE notes (
     u_id INTEGER NOT NULL,
