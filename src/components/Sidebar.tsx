@@ -16,7 +16,8 @@ const Side = styled.div`
   top: var(--nav-height);
   padding: var(--sidebar-padding);
   width: var(--sidebar-width);
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   border-right: var(--border);
   border-top: var(--border);
   /* hide sidebar by default w/ transition */
