@@ -40,7 +40,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "express": "REACT_APP_PORT=$PORT node server.ts",
+    "express": "node server.ts",
     "build-express": "npm run build && node server.ts",
     "express-nodemon": "npx nodemon --exec npm run express --ext ts"
   },
