@@ -211,8 +211,6 @@ function TextEditor(props: {
 
   // Focus if requested before render
   useEffect(() => {
-    console.log(`effect focus ${focus.current.toString()}`);
-    
     if (focusCheck) {
       setFocusCheck(false);
       focusEditor();
