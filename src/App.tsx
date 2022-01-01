@@ -24,6 +24,7 @@ function App() {
   const [sidebar, setSidebar] = useState(false);
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [currNote, setCurrNote] = useState<Note | undefined>(undefined);
+  const [retryState, setRetryState] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
 
   // Refs of App (mutable vals)
@@ -87,6 +88,7 @@ function App() {
 
   // useEffect hook to send profile requests on user and isAuthenticated updates
   useEffect(() => {
+    setRetryState(false);
     if (socket) {
       // If connected and authenticated, request profile information
       if (
@@ -117,6 +119,12 @@ function App() {
         );
         sent.current["profile_request"] = true;
         retry.current["profile_request"] = false;
+        setTimeout(() => {
+          if (!recv.current["profile_request"]) {
+            retry.current["profile_request"] = true;
+            setRetryState(true);
+          }
+        }, 3000);
       }
     }
 
@@ -124,7 +132,7 @@ function App() {
     return () => {
       return;
     };
-  }, [socket, isAuthenticated, user, sConnected]);
+  }, [socket, isAuthenticated, user, sConnected, retryState]);
 
   // Create addNoteCallback function for children to use when adding a new note
   const addNoteCallback = useCallback(() => {
