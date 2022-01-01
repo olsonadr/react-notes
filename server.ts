@@ -75,7 +75,6 @@ io.on('connection', async (socket) => {
     
     // Handler for receiving user authentication message
     socket.on('profile_request', async (msg, ack) => {
-        
         // Handle auth message here (if payload given)
         let logMsg = "";
         logMsg += 'Received profile request';
@@ -154,7 +153,7 @@ io.on('connection', async (socket) => {
                 // Return a response message to refresh user profile with new profile
                 console.log('Emitting profile_refresh responses!');
                 ack(profile);
-            });   
+            });
         }
     });
 
