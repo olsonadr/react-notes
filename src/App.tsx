@@ -22,9 +22,9 @@ const AppComp = styled.div`
 function App() {
   // States of App
   const [sidebar, setSidebar] = useState(true);
-  const { user, isAuthenticated, isLoading } = useAuth0();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [currNote, setCurrNote] = useState<Note | undefined>(undefined);
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   // Refs of App (mutable vals)
   const sent: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
