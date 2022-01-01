@@ -40,13 +40,13 @@ function App() {
     if (socket) {
       // On connect handler
       socket.on("connect", () => {
-        console.log("Connected to backend!");
+        // console.log("Connected to backend!");
 
         sConnected.current = true;
       });
       // On disconnect handler
       socket.on("disconnect", () => {
-        console.log("Lost connection with backend!");
+        // console.log("Lost connection with backend!");
 
         sConnected.current = false;
 
@@ -66,12 +66,12 @@ function App() {
     if (socket) {
       // Profile refresh handler
       socket.on("profile_refresh", (msg: Profile) => {
-        console.log("Received profile refresh request!");
+        // console.log("Received profile refresh request!");
         setProfile(msg);
       });
       // Note redirect handler
       socket.on("note_redirect", (msg: { note_id: number }) => {
-        console.log(`Received redirect request for note ${msg.note_id}!`);
+        // console.log(`Received redirect request for note ${msg.note_id}!`);
         if (profile && profile.notes) {
           let notes_with_id = profile.notes.filter((obj) => {
             return obj.note_id === msg.note_id;
@@ -96,7 +96,7 @@ function App() {
           retry.current["profile_request"] === true)
         // !profileRequestSent.current
       ) {
-        console.log("Sending profile request!");
+        // console.log("Sending profile request!");
         socket.emit(
           "profile_request",
           {
@@ -107,7 +107,7 @@ function App() {
           },
           (msg: Profile) => {
             // after receiving ack message from server
-            console.log("Received profile response!");
+            // console.log("Received profile response!");
             recv.current["profile_request"] = true;
             retry.current["profile_request"] = false;
             setProfile(msg);
@@ -127,17 +127,14 @@ function App() {
   // Create addNoteCallback function for children to use when adding a new note
   const addNoteCallback = useCallback(
     () => {
-      console.log("Hit the add button!");
+      // console.log("Hit the add button!");
       if (socket && user && user.sub && !isLoading) {
         socket.emit(
           "add_note",
           { user_id: user.sub, name: "New Note", data: "" },
           (profile: Profile, note_id: number) => {
-            // ack function
-            // Load the returned profile and redirect to the returned note
-            console.log(
-              `Received profile refresh and note redirect request for note ${note_id}!`
-            );
+            // ack function, load the returned profile and redirect to the returned note
+            // console.log(`Received profile refresh and note redirect request for note ${note_id}!`);
             setProfile(profile);
             if (profile && profile.notes) {
               let notes_with_id = profile.notes.filter((obj) => {
@@ -163,7 +160,7 @@ function App() {
 
       // Check if socket is connected, if so, emit delete_note message
       if (socket && sConnected && user && user.sub) {
-        console.log("Sending delete_note request!");
+        // console.log("Sending delete_note request!");
         socket.emit(
           "delete_note",
           {
