@@ -449,17 +449,21 @@ function DropdownMenu(props: {
               className="menu menu-primary"
               ref={nodeRefMain}
             >
-              <DropdownItem leftIcon={<BsPersonCircle />}>
-                My Profile
-              </DropdownItem>
-              <DropdownItem
-                leftIcon={<CogIcon />}
-                rightIcon={<ChevronIcon />}
-                goToMenu="settings"
-                setActiveMenu={setActiveMenu}
-              >
-                Settings
-              </DropdownItem>
+              {props.loggedIn && (
+                <>
+                  <DropdownItem leftIcon={<BsPersonCircle />}>
+                    My Profile
+                  </DropdownItem>
+                  <DropdownItem
+                    leftIcon={<CogIcon />}
+                    rightIcon={<ChevronIcon />}
+                    goToMenu="settings"
+                    setActiveMenu={setActiveMenu}
+                  >
+                    Settings
+                  </DropdownItem>
+                </>
+              )}
               <DropdownItem
                 leftIcon={<AiOutlineInfoCircle />}
                 rightIcon={<ChevronIcon />}
