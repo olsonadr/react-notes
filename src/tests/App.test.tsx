@@ -1,15 +1,15 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
+import ReactDOM from "react-dom";
 import App from "../App";
 
-describe("App", () => {
-  it("should be able to run tests", () => {
-    expect(1 + 2).toEqual(3);
-  });
+// Mock socket creation
+jest.mock("socket.io-client", () => {
+  return (url: string, opts:{[key: string]:any} ) => {return undefined;};
 });
 
-// test("renders learn react link", () => {
-//   render(<App />);
-//   const linkElement = screen.getByText(/learn react/i);
-//   expect(linkElement).toBeInTheDocument();
-// });
+test("App renders without exception", () => {
+  const div = document.createElement("div");
+  ReactDOM.render(
+    <App />,
+    div
+  );
+});

@@ -11,11 +11,10 @@ test("MainPanel renders without exception", () => {
   const loadingOpt = [true, false];
   const socketOpt = [undefined];
   const profileOpt = [undefined];
-  const noteOpt = [
+  const setCurrNoteOpt = [() => {}];
+  const currNoteOpt = [
     undefined,
-    { loaded: false, data: "" },
-    { loaded: false, data: "data" },
-    { loaded: true, data: "data" },
+    { note_id: 2, name: "new note", data: "contents!" },
   ];
   const propCombs = {
     setSidebar: setSidebarOpt,
@@ -25,7 +24,8 @@ test("MainPanel renders without exception", () => {
     loading: loadingOpt,
     socket: socketOpt,
     profile: profileOpt,
-    note: noteOpt,
+    currNote: currNoteOpt,
+    setCurrNote: setCurrNoteOpt,
   };
 
   // Setup callback to test each combinatio
@@ -40,7 +40,8 @@ test("MainPanel renders without exception", () => {
         loading={props.loading}
         socket={props.socket}
         profile={props.profile}
-        note={props.noteOpt}
+        setCurrNote={props.setCurrNoteOpt}
+        currNote={props.currNoteOpt}
       />,
       div
     );

@@ -25,6 +25,11 @@ jest.mock("@auth0/auth0-react", () => {
   };
 });
 
+// Mock socket creation
+jest.mock("socket.io-client", () => {
+  return (url: string, opts:{[key: string]:any} ) => {return undefined;};
+});
+
 test("Auth loading text initially displayed", () => {
   mockAuth = false;
   mockLoading = true;

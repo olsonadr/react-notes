@@ -1,23 +1,20 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import {
   Editor,
   EditorState,
   CompositeDecorator,
   ContentBlock,
-  ContentState
+  ContentState,
 } from "draft-js";
-import {
-  Box,
-  Paper,
-} from "@material-ui/core";
+import { Box, Paper } from "@material-ui/core";
 import { linkStrategy } from "./linkStrategy";
 import { DecoratedLink } from "./DecoratedLink";
 import { MediaComponent } from "./MediaComponent";
 import LoginButton from "./LoginButton";
 import { User } from "@auth0/auth0-react";
-import { Profile } from "../interfaces";
-import 'draft-js/dist/Draft.css';
+import { Note, Profile } from "../interfaces";
+import "draft-js/dist/Draft.css";
 import { EditorContext } from "./EditorContext";
 // import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
@@ -49,7 +46,7 @@ const H1 = styled.h1`
   font-size: 2rem;
   font-weight: bold;
   color: var(--fg-text);
-  `;
+`;
 
 const H2 = styled.h2`
   margin-bottom: 0.5rem;
@@ -74,11 +71,13 @@ function MainPanel(props: {
   loading: boolean;
   socket: any;
   profile: Profile | undefined;
-  note?: {loaded: boolean, data: string};
+  currNote: Note | undefined;
+  setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
 }) {
   // Will be state of the current note when user notes implemented
-  const noteSelected:boolean = props.note ? true : false;
-  const noteLoaded:boolean = props.note ? props.note.loaded : false;
+  const noteSelected: boolean = props.currNote ? true : false;
+  const noteLoaded: boolean = props.currNote ? true : false;
+  //   const noteLoaded:boolean = props.currNote ? props.currNote.loaded : false;
 
   // Return jsx output for this component
   return (
@@ -91,7 +90,10 @@ function MainPanel(props: {
           props.auth &&
           props.user &&
           !props.loading && (
-            <TextEditor note={props.note}/>
+            <TextEditor
+              currNote={props.currNote}
+              setCurrNote={props.setCurrNote}
+            />
           )}
         {/* If logged in and profile loaded, but selected note not loaded */}
         {props.profile &&
@@ -150,22 +152,35 @@ const BoxS = styled(Box)`
 // Local TextEditor react component
 // Inspiration: https://medium.com/swlh/rich-editor-for-your-react-typescript-project-using-hooks-21c669e54df2
 function TextEditor(props: {
-  note?: { loaded: boolean; data: string };
-  setNoteData?: (newData:string)=>{} | undefined;
+  currNote: Note | undefined;
+  setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
 }) {
   // Get ref to editor
   const editor = useRef<Editor>(null);
 
+  // Callback for setting editor state on note load
+  const loadCurrNote = useCallback(
+    () => {
+      return EditorState.createWithContent(
+        ContentState.createFromText(
+          props.currNote && props.currNote.data ? props.currNote.data : ""
+        ),
+        // EditorState.createEmpty(
+        new CompositeDecorator([
+          { strategy: linkStrategy, component: DecoratedLink },
+        ])
+      );
+    },
+    [props.currNote],
+  )
+
   // State of editor
-  const [editorState, setEditorState] = useState<EditorState>(
-    EditorState.createWithContent(
-      ContentState.createFromText(
-        props.note && props.note.data ? props.note.data : ""
-      ),
-    // EditorState.createEmpty(
-      new CompositeDecorator([{strategy: linkStrategy, component: DecoratedLink}])
-    )
-  );
+  const [editorState, setEditorState] = useState<EditorState>(loadCurrNote);
+
+  // When note changes, change editor state
+  useEffect(() => {
+    setEditorState(loadCurrNote());
+  }, [props.currNote, loadCurrNote]);
 
   // Focus editor callback
   const focusEditor = React.useCallback(() => {
@@ -198,7 +213,7 @@ function TextEditor(props: {
       <Box m={2}>
         <Box>
           <Paper>
-          {/* <Paper style={{ minHeight: "100px" }}> */}
+            {/* <Paper style={{ minHeight: "100px" }}> */}
             <Box onClick={focusEditor} p={4}>
               <EditorContext.Provider value={editorState}>
                 <Editor
