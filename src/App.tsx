@@ -32,7 +32,6 @@ function App() {
   const recv: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
   const retry: React.MutableRefObject<{ [key: string]: Boolean }> = useRef({});
   const [showSaveButton, setShowSaveButton] = useState(false);
-  const sConnected = useRef(false);
 
   // Connect to socket using Socket react context
   const socket = React.useContext(SocketContext);
@@ -44,13 +43,10 @@ function App() {
       socket.on("connect", () => {
         // console.log("Connected to backend!");
 
-        sConnected.current = true;
       });
       // On disconnect handler
       socket.on("disconnect", () => {
         // console.log("Lost connection with backend!");
-
-        sConnected.current = false;
 
         if (
           sent.current["profile_request"] === true &&
@@ -87,18 +83,17 @@ function App() {
   }, [socket, profile, currNote]);
 
   // useEffect hook to send profile requests on user and isAuthenticated updates
-  useEffect(() => {
+  useEffect(() => {    
     setRetryState(false);
     if (socket) {
       // If connected and authenticated, request profile information
       if (
-        sConnected.current === true &&
+        socket.connected === true &&
         user &&
         isAuthenticated &&
         (!sent.current["profile_request"] ||
-          retry.current["profile_request"] === true)
-        // !profileRequestSent.current
-      ) {
+        retry.current["profile_request"] === true)
+        ) {
         // console.log("Sending profile request!");
         socket.emit(
           "profile_request",
@@ -132,7 +127,7 @@ function App() {
     return () => {
       return;
     };
-  }, [socket, isAuthenticated, user, sConnected, retryState]);
+  }, [socket, isAuthenticated, user, retryState]);
 
   // Create addNoteCallback function for children to use when adding a new note
   const addNoteCallback = useCallback(() => {
@@ -166,7 +161,7 @@ function App() {
       e.stopPropagation();
 
       // Check if socket is connected, if so, emit delete_note message
-      if (socket && sConnected && user && user.sub) {
+      if (socket && socket.connected && user && user.sub) {
         // console.log("Sending delete_note request!");
         socket.emit(
           "delete_note",
@@ -195,7 +190,7 @@ function App() {
         );
       }
     },
-    [socket, sConnected, user, currNote, profile]
+    [socket, user, currNote, profile]
   );
 
   // Create addNoteCallback function for children to use when adding a new note

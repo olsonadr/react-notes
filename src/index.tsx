@@ -6,6 +6,9 @@ import "./styles/index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Auth0Provider } from "@auth0/auth0-react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import TOS from "./routes/tos";
+import Privacy from "./routes/privacy";
 
 // Get Auth0 variables from environment
 const authDomain =
@@ -25,7 +28,14 @@ ReactDOM.render(
       clientId={authClientId}
       redirectUri={window.location.origin}
     >
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/docs/tos" element={<TOS />} />
+          <Route path="/docs/privacy" element={<Privacy />} />
+          <Route path="/*" element={<App />} />
+          {/* <Route path="/" element={<App defaultRetry={true}/>} /> */}
+        </Routes>
+      </BrowserRouter>
     </Auth0Provider>
   </React.StrictMode>,
   document.getElementById("root")
