@@ -148,7 +148,7 @@ function Sidebar(props: {
           );
           // If active note, add "active" class
           classList = classList.concat(
-            note.data !== note.orig_data ? " altered" : ""
+            note.data !== note.orig_data || note.name !== note.new_name ? " altered" : ""
           );
           // Add the button to the temp list
           tempNotesList = tempNotesList.concat(

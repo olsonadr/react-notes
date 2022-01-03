@@ -100,8 +100,8 @@ CREATE OR REPLACE FUNCTION add_note (
         -- RAISE NOTICE 'COALESCE(max_suffix, 1) = %;', COALESCE(max_suffix, 0)+1;
         RAISE NOTICE 'new_name = %;', new_name;
 
-        -- Add title as the header (first line) of the data
-        new_data := (new_name || E'\n' || data_in);
+        -- -- Add title as the header (first line) of the data
+        -- new_data := (new_name || E'\n' || data_in);
 
         -- Insert new note into DB using decided name and return it's ID
         INSERT INTO notes (u_id, name, data) VALUES (u_id_in, new_name, new_data) RETURNING note_id INTO note_id_out;

@@ -162,6 +162,17 @@ const BoxS = styled(Box)`
     font-size: 14pt;
     margin-bottom: 1rem;
   }
+
+  & .name_box * {
+    font-weight: bold;
+    font-size: 14pt;
+  }
+
+  & .name_box {
+    border-bottom: var(--border);
+    border-style: dashed;
+    border-color: gray;
+  }
 `;
 
 // Local TextEditor react component
@@ -184,6 +195,7 @@ function TextEditor(props: {
 
   // Get ref to editor
   const editor = useRef<Editor>(null);
+  const nameEditor = useRef<Editor>(null);
   const focus = useRef<boolean>(false);
   const [focusCheck, setFocusCheck] = useState<boolean>(false);
 
@@ -202,8 +214,25 @@ function TextEditor(props: {
     return newEditorState;
   }, [currNote]);
 
+  // Callback for setting nameEditor state on note load
+  const loadCurrNoteName = useCallback(() => {
+    const newNameEditorState = EditorState.createWithContent(
+      ContentState.createFromText(
+        currNote && currNote.new_name ? currNote.new_name : ""
+      ),
+      // EditorState.createEmpty(
+      new CompositeDecorator([
+        { strategy: linkStrategy, component: DecoratedLink },
+      ])
+    );
+    // Return state for this note
+    return newNameEditorState;
+  }, [currNote]);
+
   // State of editor
   const [editorState, setEditorState] = useState<EditorState>(loadCurrNote);
+  const [nameEditorState, setNameEditorState] =
+    useState<EditorState>(loadCurrNoteName);
 
   // Focus editor callback
   const focusEditor = React.useCallback(() => {
@@ -211,6 +240,12 @@ function TextEditor(props: {
       editor.current.focus();
     }
   }, [editor]);
+  const focusNameEditor = React.useCallback(() => {
+    if (nameEditor.current) {
+      nameEditor.current.focus();
+    }
+  }, [nameEditor]);
+
 
   // When note changes, change editor state
   useEffect(() => {
@@ -220,13 +255,21 @@ function TextEditor(props: {
     setFocusCheck(true);
   }, [currNote, loadCurrNote, setShowSaveButton, focusEditor]);
 
+  // When note name changes, change name editor state
+  useEffect(() => {
+    // Get currNote's name into text editor
+    setNameEditorState(loadCurrNoteName());
+  }, [currNote, loadCurrNoteName, setShowSaveButton]);
+
+
   // When content changes, check if the save button should be displayed
   useEffect(() => {
     // Set whether the save button should be visible for this note
     setShowSaveButton(
-      currNote !== undefined && currNote.data !== currNote.orig_data
+      currNote !== undefined && (currNote.data !== currNote.orig_data || currNote.new_name !== currNote.name)
     );
-  }, [currNote, setShowSaveButton, editorState]);
+  }, [currNote, setShowSaveButton, editorState, nameEditorState]);
+
 
   // Focus if requested before render
   useEffect(() => {
@@ -242,22 +285,6 @@ function TextEditor(props: {
       // Establish editor state to update
       let newEditorState = editorState;
 
-      // console.log('Before:');
-      // console.log(RichUtils.getCurrentBlockType(newEditorState));
-      // // console.log(editorState);
-
-      // Ensure first line is header (title line)
-      const HEADING = "header-one";
-      const currentContent = newEditorState.getCurrentContent();
-      const firstBlockKey = currentContent.getBlockMap().first().getKey();
-      const currentBlockKey = newEditorState.getSelection().getAnchorKey();
-      const isFirstBlock = currentBlockKey === firstBlockKey;
-      const currentBlockType = RichUtils.getCurrentBlockType(newEditorState);
-      const isHeading = currentBlockType === HEADING;
-      if (isFirstBlock !== isHeading) {
-        newEditorState = RichUtils.toggleBlockType(newEditorState, HEADING);
-      }
-
       // Set editor state useState hook
       setEditorState(newEditorState);
 
@@ -265,17 +292,47 @@ function TextEditor(props: {
       if (currNote) {
         const currentContent = newEditorState.getCurrentContent();
         const currData = currentContent.getPlainText();
+        // const currName = currentContent.getBlockMap().first().getText();
+
+        currNote.data = currData;
+        setCurrNote(currNote);
+
+        if (!showSaveButton) {
+          setShowSaveButton(currNote.orig_data !== currNote.data);
+        }        
+      }
+
+      // Return finalized newEditorState
+      return newEditorState;
+    },
+    // [currNote, showSaveButton, setShowSaveButton]
+    [currNote, setCurrNote, showSaveButton, setShowSaveButton]
+  );
+
+  // Custom onChange callback to save name in currNote
+  const onNameEditorChangeCallback = useCallback(
+    (editorState: EditorState) => {
+      // Establish editor state to update
+      let newEditorState = editorState;
+
+      // Set editor state useState hook
+      setNameEditorState(newEditorState);
+
+      // Get whether the save button should be displayed
+      if (currNote) {
+        const currentContent = newEditorState.getCurrentContent();
+        // const currData = currentContent.getPlainText();
         const currName = currentContent.getBlockMap().first().getText();
         // const currName = convertToRaw(currentContent.getBlockMap()).blocks.find();
         // const currRaw = convertToRaw(editorState.getCurrentContent());
-        if (!showSaveButton) {
-          setShowSaveButton(currNote.data !== currData);
-        }
-        currNote.data = currData;
+
+        // currNote.data = currData;
         currNote.new_name = currName;
-        // currNote.name = currName;
         setCurrNote(currNote);
-        // currNote.data = convertFromRaw(currRaw);
+        
+        if (!showSaveButton) {
+          setShowSaveButton(currNote.name !== currNote.new_name);
+        }
       }
 
       // Return finalized newEditorState
@@ -343,6 +400,18 @@ function TextEditor(props: {
         <Box>
           <Paper>
             {/* <Paper style={{ minHeight: "100px" }}> */}
+            <Box className="name_box" onClick={focusNameEditor} p={4}>
+              <EditorContext.Provider value={nameEditorState}>
+                <Editor
+                  editorState={nameEditorState}
+                  onChange={onNameEditorChangeCallback}
+                  placeholder="Click here to start typing..."
+                  blockRendererFn={renderBlock}
+                  handleKeyCommand={handleKeyCommand}
+                  ref={nameEditor}
+                />
+              </EditorContext.Provider>
+            </Box>
             <Box onClick={focusEditor} p={4}>
               <EditorContext.Provider value={editorState}>
                 <Editor
