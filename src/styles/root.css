@@ -26,6 +26,10 @@
   --sidebar-padding: 5px;
   --sidebar-in-time: 300ms;
   --sidebar-out-time: 300ms;
+  --sidebar-altered-margin: 0.75rem;
+  --sidebar-trash-width: 1rem;
+  --sidebar-trash-rmargin: 0.25rem;
+  --sidebar-trash-padding: 0.25rem;
   --dropdown-width: 270px;
   --dropdown-padding: 1rem;
 

@@ -11,7 +11,7 @@ const Side = styled.div`
   background-color: var(--bg);
   height: calc(100vh - var(--nav-height));
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   position: fixed;
   top: var(--nav-height);
   padding: var(--sidebar-padding);
@@ -37,13 +37,16 @@ const SideButton = styled.li`
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   border-radius: 5px;
-  width: var(--sidebar-width);
-  /* text-align: center; */
+  width: calc(
+    var(--sidebar-width) - 1 * var(--sidebar-trash-padding) - 2 -
+      var(--sidebar-padding)
+  );
+  word-break: break-all;
   display: flex;
-  /* justify-content: center; */
+  position: relative;
   justify-content: left;
-  /* position: absolute; */
   align-content: center;
+  text-align: left;
   &:hover {
     background-color: var(--bg-bold);
     color: var(--bg-text-bold);
@@ -63,8 +66,8 @@ const SideButton = styled.li`
     filter: brightness(200%);
     border-radius: 50%;
     align-self: center;
-    margin-left: 0.75rem;
-    margin-right: 0.75rem;
+    margin-left: var(--sidebar-altered-margin);
+    margin-right: var(--sidebar-altered-margin);
   }
   &.altered::before {
     visibility: visible;
@@ -76,17 +79,19 @@ const SideButton = styled.li`
   &.active .trash {
     visibility: visible;
   }
+  & p {
+    align-self: center;
+  }
 `;
 
 const SideDeleteButton = styled(FaTrash)`
-  font-size: 1rem;
-  padding: 0.1rem;
-  margin-right: 0.25rem;
-  justify-self: right;
+  font-size: var(--sidebar-trash-width);
+  padding: var(--sidebar-trash-padding);
+  margin-right: var(--sidebar-trash-rmargin);
+  align-self: center;
+  margin-left: auto;
   cursor: pointer;
-  flex: 0 1 auto;
-  position: absolute;
-  right: 0.5rem;
+  flex: 0 0 auto;
   color: var(--bg-text-light);
   &:hover {
     color: var(--bg-text-bold);
@@ -110,7 +115,8 @@ function Sidebar(props: {
   showSaveButton: boolean;
 }) {
   // Destructure props that will be used in dependency lists
-  const { profile, currNote, setCurrNote, deleteNoteCallback, showSaveButton } = props;
+  const { profile, currNote, setCurrNote, deleteNoteCallback, showSaveButton } =
+    props;
 
   // useState hook to track the list of notes JSX elements
   const [notesList, setNotesList] = useState<JSX.Element[]>([]);
@@ -130,6 +136,7 @@ function Sidebar(props: {
         (note: {
           note_id: number;
           name: string;
+          new_name: string;
           data: string;
           orig_data: string;
         }) => {
@@ -176,7 +183,7 @@ function Sidebar(props: {
     currNote,
     deleteNoteCallback,
     currNoteScrollCallbackRef,
-    showSaveButton
+    showSaveButton,
   ]);
 
   // Return jsx for component
