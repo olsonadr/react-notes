@@ -26,11 +26,15 @@
   --sidebar-padding: 5px;
   --sidebar-in-time: 300ms;
   --sidebar-out-time: 300ms;
+  --sidebar-altered-margin: 0.75rem;
+  --sidebar-trash-width: 1rem;
+  --sidebar-trash-rmargin: 0.25rem;
+  --sidebar-trash-padding: 0.25rem;
   --dropdown-width: 270px;
   --dropdown-padding: 1rem;
 
-  --blue: rgb(0, 67, 143);
-  --blue-bold: rgb(1, 88, 187);
+  --blue: rgb(13, 104, 207);
+  --blue-bold: rgb(38, 122, 218);
 
   --border: 1px solid var(--bg-bold);
   --border-radius: 8px;

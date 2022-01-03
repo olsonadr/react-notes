@@ -2,7 +2,7 @@
 -- Write-able transaction
 set transaction read write; 
 -- Delete if exists
--- DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users;
 -- Create users table
 CREATE TABLE users (
     u_id SERIAL UNIQUE NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE users (
 
 -- -- Initialization of notes table for react-notes app
 -- Delete if exists
--- DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS notes;
 -- Create notes table
 CREATE TABLE notes (
     u_id INTEGER NOT NULL,
@@ -57,6 +57,7 @@ CREATE OR REPLACE FUNCTION add_note (
         dup_name_count INTEGER;
         new_name TEXT;
         max_suffix INTEGER DEFAULT NULL;
+        new_data TEXT;
     BEGIN
         -- Check if name taken and if there exist duplicate names
         SELECT COUNT(name) INTO name_count FROM notes WHERE name = name_in;
@@ -95,12 +96,15 @@ CREATE OR REPLACE FUNCTION add_note (
         -- If no name was found, then there were no duplicates with numbers, so use 1
         new_name := COALESCE(new_name, (name_in || ' ' || (COALESCE(max_suffix, 0)+1)::TEXT));
 
-        RAISE NOTICE 'max_suffix = %;', max_suffix;
-        RAISE NOTICE 'COALESCE(max_suffix, 1) = %;', COALESCE(max_suffix, 0)+1;
+        -- RAISE NOTICE 'max_suffix = %;', max_suffix;
+        -- RAISE NOTICE 'COALESCE(max_suffix, 1) = %;', COALESCE(max_suffix, 0)+1;
         RAISE NOTICE 'new_name = %;', new_name;
 
+        -- -- Add title as the header (first line) of the data
+        -- new_data := (new_name || E'\n' || data_in);
+
         -- Insert new note into DB using decided name and return it's ID
-        INSERT INTO notes (u_id, name, data) VALUES (u_id_in, new_name, data_in) RETURNING note_id INTO note_id_out;
+        INSERT INTO notes (u_id, name, data) VALUES (u_id_in, new_name, new_data) RETURNING note_id INTO note_id_out;
     END;
     $$ LANGUAGE plpgsql;
 
