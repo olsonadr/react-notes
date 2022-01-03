@@ -38,8 +38,7 @@ const SideButton = styled.li`
   padding-bottom: 0.5rem;
   border-radius: 5px;
   width: calc(
-    var(--sidebar-width) - 1 * var(--sidebar-trash-padding) - 2 -
-      var(--sidebar-padding)
+    var(--sidebar-width) - 1 * var(--sidebar-trash-padding) - 2 * var(--sidebar-padding)
   );
   word-break: break-all;
   display: flex;
@@ -68,6 +67,7 @@ const SideButton = styled.li`
     align-self: center;
     margin-left: var(--sidebar-altered-margin);
     margin-right: var(--sidebar-altered-margin);
+    flex-shrink: 0;
   }
   &.altered::before {
     visibility: visible;
