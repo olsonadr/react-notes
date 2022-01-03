@@ -35,7 +35,15 @@ exports.getProfile = async (u_id, pool) => {
     // Add orig_data field to each note
     if (data && data.notes) {
         data.notes.forEach(note => {
+            if (!note.data) note.data = "";
             note.orig_data = note.data;
+        });
+    }
+
+    // Add new_name field to each note
+    if (data && data.notes) {
+        data.notes.forEach(note => {
+            note.new_name = note.name;
         });
     }
 
@@ -72,6 +80,7 @@ exports.getProfile_client = async (u_id, client) => {
     // Add orig_data field to each note
     if (data && data.notes) {
         data.notes.forEach(note => {
+            if (!note.data) note.data = "";
             note.orig_data = note.data;
         });
     }
