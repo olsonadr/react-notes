@@ -451,7 +451,7 @@ function DropdownMenu(props: {
             >
               {props.loggedIn && (
                 <>
-                  <DropdownItem leftIcon={<BsPersonCircle />}>
+                  {/* <DropdownItem leftIcon={<BsPersonCircle />}>
                     My Profile
                   </DropdownItem>
                   <DropdownItem
@@ -461,7 +461,7 @@ function DropdownMenu(props: {
                     setActiveMenu={setActiveMenu}
                   >
                     Settings
-                  </DropdownItem>
+                  </DropdownItem> */}
                 </>
               )}
               <DropdownItem
