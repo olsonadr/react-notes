@@ -449,9 +449,9 @@ function DropdownMenu(props: {
               className="menu menu-primary"
               ref={nodeRefMain}
             >
-              {props.loggedIn && (
+              {props.loggedIn && false && (
                 <>
-                  {/* <DropdownItem leftIcon={<BsPersonCircle />}>
+                  <DropdownItem leftIcon={<BsPersonCircle />}>
                     My Profile
                   </DropdownItem>
                   <DropdownItem
@@ -461,7 +461,7 @@ function DropdownMenu(props: {
                     setActiveMenu={setActiveMenu}
                   >
                     Settings
-                  </DropdownItem> */}
+                  </DropdownItem>
                 </>
               )}
               <DropdownItem
