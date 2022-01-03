@@ -449,7 +449,7 @@ function DropdownMenu(props: {
               className="menu menu-primary"
               ref={nodeRefMain}
             >
-              {props.loggedIn && (
+              {props.loggedIn && false && (
                 <>
                   <DropdownItem leftIcon={<BsPersonCircle />}>
                     My Profile
