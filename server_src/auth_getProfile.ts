@@ -76,6 +76,13 @@ exports.getProfile_client = async (u_id, client) => {
         });
     }
 
+    // Add new_name field to each note
+    if (data && data.notes) {
+        data.notes.forEach(note => {
+            note.new_name = note.name;
+        });
+    }
+
     // Return result (object filled with user info)
     return data;
 };
