@@ -195,7 +195,12 @@ function App() {
     if (socket && user && user.sub && !isLoading && currNote) {
       socket.emit(
         "save_note",
-        { user_id: user.sub, name: currNote.new_name, data: currNote.data, note_id: currNote.note_id },
+        {
+          user_id: user.sub,
+          name: currNote.new_name,
+          data: currNote.data,
+          note_id: currNote.note_id,
+        },
         () => {
           // ack function, save was successful, update currNote with its new data
           currNote.orig_data = currNote.data;
