@@ -162,9 +162,9 @@ io.on('connection', async (socket) => {
 
     // Handler for request to save the current note on client
     socket.on('save_note', async (msg, ack) => {
-        console.log('Received delete_note request!');
+        console.log('Received save_note request!');
         // If payload given, attempt to delete note
-        if (msg && msg.user_id && msg.note_id && msg.name && msg.data) {
+        if (msg && msg.user_id && msg.note_id && msg.name) {
             // Get connection
             await pool.connect(async (err, client, done) => {
                 // Remove note from DB

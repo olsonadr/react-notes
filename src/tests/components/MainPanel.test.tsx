@@ -14,6 +14,7 @@ test("MainPanel renders without exception", () => {
   const setCurrNoteOpt = [() => {}];
   const showSaveButtonOpt = [true, false];
   const setShowSaveButtonOpt = [()=>{}];
+  const saveCurrNoteCallbackOpt = [()=>{}];
   const currNoteOpt = [
     undefined,
     { note_id: 2, name: "new note", data: "contents!" },
@@ -30,6 +31,7 @@ test("MainPanel renders without exception", () => {
     setCurrNote: setCurrNoteOpt,
     showSaveButton: showSaveButtonOpt,
     setShowSaveButton: setShowSaveButtonOpt,
+    saveCurrNoteCallback: saveCurrNoteCallbackOpt,
   };
 
   // Setup callback to test each combinatio
@@ -48,6 +50,7 @@ test("MainPanel renders without exception", () => {
         currNote={props.currNote}
         showSaveButton={props.showSaveButton}
         setShowSaveButton={props.setShowSaveButton}
+        saveCurrNoteCallback={props.saveCurrNoteCallback}
       />,
       div
     );
