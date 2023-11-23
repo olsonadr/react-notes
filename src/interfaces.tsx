@@ -1,8 +1,10 @@
-// Profile interface
+// Profile interfaces
 export interface Profile {
   name: string;
   email: string;
   picture: string;
+}
+export interface ProfileWithNotes extends Profile {
   notes: Note[];
 }
 

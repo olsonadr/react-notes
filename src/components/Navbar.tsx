@@ -15,7 +15,7 @@ import { BsPersonCircle } from "react-icons/bs";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import logo from "../img/small_logo.png";
 import { User } from "@auth0/auth0-react";
-import { Profile } from "../interfaces";
+import { ProfileWithNotes } from "../interfaces";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
 import { Socket } from "socket.io-client";
@@ -126,7 +126,7 @@ function Navbar(props: {
   user: User | undefined;
   auth: boolean;
   loading: boolean;
-  profile: Profile | undefined;
+  profile: ProfileWithNotes | undefined;
   socket: Socket | undefined;
   addNoteCallback: () => void;
   saveCurrNoteCallback: () => void;
@@ -452,7 +452,7 @@ function DropdownMenu(props: {
               {props.loggedIn && false && (
                 <>
                   <DropdownItem leftIcon={<BsPersonCircle />}>
-                    My Profile
+                    My ProfileWithNotes
                   </DropdownItem>
                   <DropdownItem
                     leftIcon={<CogIcon />}

@@ -6,7 +6,7 @@ This is a simple note-taking app that is planned to allow each logged-in user to
  - **REACT_APP_AUTH0_DOMAIN** = the Domain for the Auth0 application
  - **REACT_APP_AUTH0_CLIENT_ID** = the Client ID for the Auth0 application
  - **PORT** = the port on which express should serve the compiled, static React app
- - **DATABASE_URL_DEV** = for development, used in place of DATABASE_URL (that is set by Heroku or manually for pointing to the PostgreSQL database in production)
+ - **DATABASE_URL_DEV** = for development, used in place of DATABASE_URL (that is set by deployment platform or manually for pointing to the PostgreSQL database in production)
 
 ## Available Scripts
 
@@ -30,3 +30,19 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
+
+
+## Build Instructions
+
+1. Fill in secret files:
+    1. ./secrets/postgres_password
+    1. ./secrets/react_app_env
+    1. ./secrets/server.env
+
+2. Build docker image:
+
+    - `DOCKER_BUILDKIT=1 docker build . -t react-notes-server --secret id=react_app_env,source=./secrets/react_app.env --secret id=postgres_password,source=./secrets/postgres_password --secret id=server_env,source=./secrets/server.env`
+
+3. Or use compose:
+
+    - `docker compose up`

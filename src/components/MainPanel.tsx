@@ -14,7 +14,7 @@ import { DecoratedLink } from "./DecoratedLink";
 import { MediaComponent } from "./MediaComponent";
 import LoginButton from "./LoginButton";
 import { User } from "@auth0/auth0-react";
-import { Note, Profile } from "../interfaces";
+import { Note, ProfileWithNotes } from "../interfaces";
 import "draft-js/dist/Draft.css";
 import { EditorContext } from "./EditorContext";
 // import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -71,7 +71,7 @@ function MainPanel(props: {
   auth: boolean;
   loading: boolean;
   socket: any;
-  profile: Profile | undefined;
+  profile: ProfileWithNotes | undefined;
   currNote: Note | undefined;
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
   showSaveButton: boolean;
@@ -130,6 +130,7 @@ function MainPanel(props: {
           <VertFlex>
             <H1>Hello, {props.user.name}!</H1>
             <H2>Loading your profile...</H2>
+            <H2>profile={props.profile}, auth={props.auth}, props.loading={props.loading}, user={props.user.name}</H2>
           </VertFlex>
         )}
         {/* If logged out: */}

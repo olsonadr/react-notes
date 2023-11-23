@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import MainPanel from "./components/MainPanel";
 import { SocketContext, Socket } from "./components/Socket";
-import { Profile, Note } from "./interfaces";
+import { ProfileWithNotes, Note } from "./interfaces";
 
 // Styled elements
 const AppComp = styled.div`
@@ -22,7 +22,7 @@ const AppComp = styled.div`
 function App() {
   // States of App
   const [sidebar, setSidebar] = useState(false);
-  const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [profile, setProfile] = useState<ProfileWithNotes | undefined>(undefined);
   const [currNote, setCurrNote] = useState<Note | undefined>(undefined);
   const [retryState, setRetryState] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -41,12 +41,16 @@ function App() {
     if (socket) {
       // On connect handler
       socket.on("connect", () => {
-        // console.log("Connected to backend!");
-
+        console.log("Connected to backend!");
+        if (!sent.current["profile_request"] ||
+          retry.current["profile_request"] === true) {
+          console.log("Profle request not sent, setting retry state!");
+          setRetryState(true);
+        }
       });
       // On disconnect handler
       socket.on("disconnect", () => {
-        // console.log("Lost connection with backend!");
+        console.log("Lost connection with backend!");
 
         if (
           sent.current["profile_request"] === true &&
@@ -62,14 +66,14 @@ function App() {
   useEffect(() => {
     // When socket is created, setup handlers
     if (socket) {
-      // Profile refresh handler
-      socket.on("profile_refresh", (msg: Profile) => {
-        // console.log("Received profile refresh request!");
+      // ProfileWithNotes refresh handler
+      socket.on("profile_refresh", (msg: ProfileWithNotes) => {
+        console.log("Received profile refresh request!");
         setProfile(msg);
       });
       // Note redirect handler
       socket.on("note_redirect", (msg: { note_id: number }) => {
-        // console.log(`Received redirect request for note ${msg.note_id}!`);
+        console.log(`Received redirect request for note ${msg.note_id}!`);
         if (profile && profile.notes) {
           let notes_with_id = profile.notes.filter((obj) => {
             return obj.note_id === msg.note_id;
@@ -83,7 +87,13 @@ function App() {
   }, [socket, profile, currNote]);
 
   // useEffect hook to send profile requests on user and isAuthenticated updates
-  useEffect(() => {    
+  useEffect(() => {
+    console.log("In profile_request useEffect hook!");
+    console.log("connected=" + socket.connected);
+    console.log("user=" + user);
+    console.log("isAuthenticated=" + isAuthenticated);
+    console.log("profile_request sent=" + sent.current["profile_request"]);
+    console.log("profile_request retry=" + retry.current["profile_request"]);
     setRetryState(false);
     if (socket) {
       // If connected and authenticated, request profile information
@@ -92,9 +102,9 @@ function App() {
         user &&
         isAuthenticated &&
         (!sent.current["profile_request"] ||
-        retry.current["profile_request"] === true)
-        ) {
-        // console.log("Sending profile request!");
+          retry.current["profile_request"] === true)
+      ) {
+        console.log("Sending profile request!");
         socket.emit(
           "profile_request",
           {
@@ -103,9 +113,9 @@ function App() {
             picture: user.picture,
             user_id: user.sub,
           },
-          (msg: Profile) => {
+          (msg: ProfileWithNotes) => {
             // after receiving ack message from server
-            // console.log("Received profile response!");
+            console.log("Received profile response!");
             recv.current["profile_request"] = true;
             retry.current["profile_request"] = false;
             setProfile(msg);
@@ -131,14 +141,14 @@ function App() {
 
   // Create addNoteCallback function for children to use when adding a new note
   const addNoteCallback = useCallback(() => {
-    // console.log("Hit the add button!");
+    console.log("Hit the add button!");
     if (socket && user && user.sub && !isLoading) {
       socket.emit(
         "add_note",
         { user_id: user.sub, name: "New Note", data: "" },
-        (profile: Profile, note_id: number) => {
+        (profile: ProfileWithNotes, note_id: number) => {
           // ack function, load the returned profile and redirect to the returned note
-          // console.log(`Received profile refresh and note redirect request for note ${note_id}!`);
+          console.log(`Received profile refresh and note redirect request for note ${note_id}!`);
           setProfile(profile);
           if (profile && profile.notes) {
             let notes_with_id = profile.notes.filter((obj) => {
@@ -162,14 +172,14 @@ function App() {
 
       // Check if socket is connected, if so, emit delete_note message
       if (socket && socket.connected && user && user.sub) {
-        // console.log("Sending delete_note request!");
+        console.log("Sending delete_note request!");
         socket.emit(
           "delete_note",
           {
             user_id: user.sub,
             note_id: note_id,
           },
-          (new_profile: Profile) => {
+          (new_profile: ProfileWithNotes) => {
             // Ack function, refresh profile
             setProfile(new_profile);
 
