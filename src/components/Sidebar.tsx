@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { User } from "@auth0/auth0-react";
 import { FaTrash } from "react-icons/fa";
-import { Profile, Note } from "../interfaces";
+import { ProfileWithNotes, Note } from "../interfaces";
 import { Socket } from "socket.io-client";
 
 // Create styled components for the navbar (emotion.js)
@@ -108,7 +108,7 @@ function Sidebar(props: {
   auth: boolean;
   loading: boolean;
   socket: Socket | undefined;
-  profile: Profile | undefined;
+  profile: ProfileWithNotes | undefined;
   currNote: Note | undefined;
   setCurrNote: React.Dispatch<React.SetStateAction<Note | undefined>>;
   deleteNoteCallback: (e: any, note_id: any) => void;

@@ -1,8 +1,6 @@
 -- -- Initialization of users table for react-notes app
 -- Write-able transaction
 set transaction read write; 
--- Delete if exists
-DROP TABLE IF EXISTS users;
 -- Create users table
 CREATE TABLE users (
     u_id SERIAL UNIQUE NOT NULL,
@@ -14,8 +12,6 @@ CREATE TABLE users (
 
 
 -- -- Initialization of notes table for react-notes app
--- Delete if exists
-DROP TABLE IF EXISTS notes;
 -- Create notes table
 CREATE TABLE notes (
     u_id INTEGER NOT NULL,
@@ -111,12 +107,13 @@ CREATE OR REPLACE FUNCTION add_note (
 
 -- -- Initialization of delete_note function for react-notes app
 -- Create or replace function to remove a note with note_id belonging to user with given u_id
-CREATE OR REPLACE PROCEDURE delete_note (
+CREATE OR REPLACE FUNCTION delete_note (
         IN u_id_in INTEGER,
-        IN note_id_in INTEGER
+        IN note_id_in INTEGER,
+        OUT note_id_out INTEGER
     ) AS $$
     BEGIN
         -- Remove notes as requested
-        DELETE FROM notes WHERE u_id = u_id_in AND note_id = note_id_in;
+        DELETE FROM notes WHERE u_id = u_id_in AND note_id = note_id_in RETURNING note_id INTO note_id_out;
     END;
     $$ LANGUAGE plpgsql;

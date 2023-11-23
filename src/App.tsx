@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import MainPanel from "./components/MainPanel";
 import { SocketContext, Socket } from "./components/Socket";
-import { Profile, Note } from "./interfaces";
+import { ProfileWithNotes, Note } from "./interfaces";
 
 // Styled elements
 const AppComp = styled.div`
@@ -22,7 +22,7 @@ const AppComp = styled.div`
 function App() {
   // States of App
   const [sidebar, setSidebar] = useState(false);
-  const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [profile, setProfile] = useState<ProfileWithNotes | undefined>(undefined);
   const [currNote, setCurrNote] = useState<Note | undefined>(undefined);
   const [retryState, setRetryState] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -42,12 +42,14 @@ function App() {
       // On connect handler
       socket.on("connect", () => {
         // console.log("Connected to backend!");
-
+        if (!sent.current["profile_request"] ||
+          retry.current["profile_request"] === true) {
+          setRetryState(true);
+        }
       });
       // On disconnect handler
       socket.on("disconnect", () => {
         // console.log("Lost connection with backend!");
-
         if (
           sent.current["profile_request"] === true &&
           !recv.current["profile_request"]
@@ -62,8 +64,8 @@ function App() {
   useEffect(() => {
     // When socket is created, setup handlers
     if (socket) {
-      // Profile refresh handler
-      socket.on("profile_refresh", (msg: Profile) => {
+      // ProfileWithNotes refresh handler
+      socket.on("profile_refresh", (msg: ProfileWithNotes) => {
         // console.log("Received profile refresh request!");
         setProfile(msg);
       });
@@ -83,7 +85,7 @@ function App() {
   }, [socket, profile, currNote]);
 
   // useEffect hook to send profile requests on user and isAuthenticated updates
-  useEffect(() => {    
+  useEffect(() => {
     setRetryState(false);
     if (socket) {
       // If connected and authenticated, request profile information
@@ -92,8 +94,8 @@ function App() {
         user &&
         isAuthenticated &&
         (!sent.current["profile_request"] ||
-        retry.current["profile_request"] === true)
-        ) {
+          retry.current["profile_request"] === true)
+      ) {
         // console.log("Sending profile request!");
         socket.emit(
           "profile_request",
@@ -103,7 +105,7 @@ function App() {
             picture: user.picture,
             user_id: user.sub,
           },
-          (msg: Profile) => {
+          (msg: ProfileWithNotes) => {
             // after receiving ack message from server
             // console.log("Received profile response!");
             recv.current["profile_request"] = true;
@@ -136,7 +138,7 @@ function App() {
       socket.emit(
         "add_note",
         { user_id: user.sub, name: "New Note", data: "" },
-        (profile: Profile, note_id: number) => {
+        (profile: ProfileWithNotes, note_id: number) => {
           // ack function, load the returned profile and redirect to the returned note
           // console.log(`Received profile refresh and note redirect request for note ${note_id}!`);
           setProfile(profile);
@@ -169,7 +171,7 @@ function App() {
             user_id: user.sub,
             note_id: note_id,
           },
-          (new_profile: Profile) => {
+          (new_profile: ProfileWithNotes) => {
             // Ack function, refresh profile
             setProfile(new_profile);
 
