@@ -16,7 +16,7 @@ import { Server, Socket } from "socket.io";
 // ----------------------------------------------------------------------
 
 // Get environment variables from .env file 
-require('dotenv').config();
+require('dotenv-expand')(require('dotenv').config());
 
 // Static serving
 app.use(express.static(path.join(__dirname, "build")));
@@ -85,7 +85,7 @@ const { getProfile_client } = require(path.join(__dirname, "server_src/auth_getP
 // Setup postgresql connection pool
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL || process.env.DATABASE_URL_DEV,
-    ssl: process.env.DATABASE_URL ? {
+    ssl: (process.env.POSTGRES_SSL && process.env.POSTGRES_SSL === "true") ? {
         rejectUnauthorized: false
     } : false
 });
@@ -95,9 +95,8 @@ pool.on('error', (err, client) => {
     console.error('PSQL Error: ', err);
 });
 
-console.log("Testing connection to psql database (url=", process.env.DATABASE_URL || process.env.DATABASE_URL_DEV,"!");
+console.log("Testing connection to psql database");
 const res = pool.connect((err, client, done) => {
-    console.log("In psql callback, err=", err, "client=", client, "done=", done, "!");
     if (err) {
         console.error('PSQL Error: ', err);
         done();

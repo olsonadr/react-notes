@@ -130,7 +130,6 @@ function MainPanel(props: {
           <VertFlex>
             <H1>Hello, {props.user.name}!</H1>
             <H2>Loading your profile...</H2>
-            <H2>profile={props.profile}, auth={props.auth}, props.loading={props.loading}, user={props.user.name}</H2>
           </VertFlex>
         )}
         {/* If logged out: */}

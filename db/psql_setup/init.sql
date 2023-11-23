@@ -107,12 +107,13 @@ CREATE OR REPLACE FUNCTION add_note (
 
 -- -- Initialization of delete_note function for react-notes app
 -- Create or replace function to remove a note with note_id belonging to user with given u_id
-CREATE OR REPLACE PROCEDURE delete_note (
+CREATE OR REPLACE FUNCTION delete_note (
         IN u_id_in INTEGER,
-        IN note_id_in INTEGER
+        IN note_id_in INTEGER,
+        OUT note_id_out INTEGER
     ) AS $$
     BEGIN
         -- Remove notes as requested
-        DELETE FROM notes WHERE u_id = u_id_in AND note_id = note_id_in;
+        DELETE FROM notes WHERE u_id = u_id_in AND note_id = note_id_in RETURNING note_id INTO note_id_out;
     END;
     $$ LANGUAGE plpgsql;

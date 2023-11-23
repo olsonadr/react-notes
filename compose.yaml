@@ -1,18 +1,20 @@
 services:
-  app:
-    image: react-notes-server
+  server:
+    image: olsonadr/react-notes
+    container_name: react-notes-server
     build:
       context: .
       secrets:
         - react_app_env
         - server_env
     ports:
-      - "3000:3000"
+      - 3000:3000
     depends_on:
       postgres:
         condition: service_healthy
   postgres:
     image: postgres:9.6.2-alpine
+    container_name: react-notes-db
     restart: always
     user: postgres
     secrets:
@@ -24,8 +26,6 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./db/psql_setup/init.sql:/docker-entrypoint-initdb.d/init.sql
-    expose:
-      - 5432
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 10s

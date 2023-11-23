@@ -2,9 +2,10 @@
 exports.deleteNote = async (u_id, note_id, pool) => {
     // Get psql connection
     const client = await pool.connect();
+    let res;
     try {
-        const selquery = `CALL delete_note(${u_id}, ${note_id});`;
-        await client.query(selquery);
+        const selquery = `SELECT delete_note(${u_id}, ${note_id}) AS note_id;`;
+        res = await client.query(selquery);
     } catch (err) {
         console.error(err.stack);
         client.end();
@@ -18,9 +19,10 @@ exports.deleteNote = async (u_id, note_id, pool) => {
 
 exports.deleteNote_client = async (u_id, note_id, client) => {
     // Get psql connection
+    let res;
     try {
-        const selquery = `CALL delete_note(${u_id}, ${note_id});`;
-        await client.query(selquery);
+        const selquery = `SELECT delete_note(${u_id}, ${note_id}) AS note_id;`;
+        res = await client.query(selquery);
     } catch (err) {
         console.error(err.stack);
         return;

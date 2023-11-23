@@ -6,7 +6,7 @@ const URL = process.env.REACT_APP_DEV_PORT
   ? `:${process.env.REACT_APP_DEV_PORT}/`
   : `${window.location.host}`;
 
-console.log(`Trying to connect to ${URL}`);
+// console.log(`Trying to connect to ${URL}`);
 
 export const Socket = io(URL, {
   reconnectionDelay: 1000,
