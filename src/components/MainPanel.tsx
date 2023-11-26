@@ -135,7 +135,7 @@ function MainPanel(props: {
         {/* If logged out: */}
         {!props.auth && !props.loading && (
           <VertFlex>
-            <H1>Welcome to react_notes!</H1>
+            <H1>Welcome to React Notes!</H1>
             <H2>Please login!</H2>
             <LoginButton className="new-line margin-top" />
           </VertFlex>
