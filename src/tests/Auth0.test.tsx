@@ -45,7 +45,7 @@ test("Login displayed and Logout not displayed before login after initial load",
   mockUser = undefined;
 
   render(<App />);
-  expect(screen.getByText("Welcome to react_notes!")).toBeTruthy();
+  expect(screen.getByText("Welcome to React Notes!")).toBeTruthy();
   expect(screen.getByText("Please login!")).toBeTruthy();
   expect(screen.getByText("Login")).toBeTruthy();
 });
