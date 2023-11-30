@@ -75,6 +75,7 @@ ARG NODE_ENV
 COPY package.json .
 
 # Copy necessary source files into the image.
+COPY src/interfaces.tsx ./src/interfaces.tsx
 COPY server_src/ ./server_src/
 COPY server.ts .
 
