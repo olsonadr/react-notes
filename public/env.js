@@ -1,0 +1,6 @@
+// public/env.js
+window.env = {
+    REACT_APP_AUTH0_DOMAIN: '__REACT_APP_AUTH0_DOMAIN__',
+    REACT_APP_AUTH0_CLIENT_ID: '__REACT_APP_AUTH0_CLIENT_ID__',
+    REACT_APP_DEV_PORT: '__REACT_APP_DEV_PORT__',
+};

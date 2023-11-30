@@ -2,9 +2,12 @@ import React from 'react';
 import io from 'socket.io-client';
 
 // Create new connection
-const URL = process.env.REACT_APP_DEV_PORT
-  ? `:${process.env.REACT_APP_DEV_PORT}/`
-  : `${window.location.host}`;
+const port_override = 
+  process.env.NODE_ENV === 'development' 
+  ? window.env.REACT_APP_DEV_PORT
+  : process.env.REACT_APP_DEV_PORT
+  ?? undefined;
+const URL = port_override ? `:${port_override}/` : `${window.location.host}`;
 
 // console.log(`Trying to connect to ${URL}`);
 

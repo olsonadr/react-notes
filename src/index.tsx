@@ -12,13 +12,15 @@ import Privacy from "./routes/privacy";
 
 // Get Auth0 variables from environment
 const authDomain =
-  process.env.REACT_APP_AUTH0_DOMAIN !== undefined
-    ? process.env.REACT_APP_AUTH0_DOMAIN
-    : "";
+  process.env.NODE_ENV === 'development'
+    ? window.env.REACT_APP_AUTH0_DOMAIN
+    : process.env.REACT_APP_AUTH0_DOMAIN
+    ?? "";
 const authClientId =
-  process.env.REACT_APP_AUTH0_CLIENT_ID !== undefined
-    ? process.env.REACT_APP_AUTH0_CLIENT_ID
-    : "";
+  process.env.NODE_ENV === 'development'
+    ? window.env.REACT_APP_AUTH0_CLIENT_ID
+    : process.env.REACT_APP_AUTH0_CLIENT_ID
+    ?? "";
 
 // Render the react app
 ReactDOM.render(

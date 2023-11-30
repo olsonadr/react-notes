@@ -1,6 +1,6 @@
 {
   "name": "react-notes",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^1.8.0",
@@ -17,6 +17,7 @@
     "@types/node": "^16.11.16",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
+    "@types/ws": "^8.5.4",
     "babel-jest": "^27.4.5",
     "dotenv-expand": "^5.1.0",
     "draft-js": "^0.11.7",
@@ -38,15 +39,14 @@
     "web-vitals": "^2.1.2"
   },
   "scripts": {
-    "start": "if [ \"${NODE_ENV}\" = \"production\" ]; then npm run start-prod; else npm run start-dev; fi",
-    "start-dev": "react-scripts start",
+    "start": "if [ \"${NODE_ENV}\" = \"production\" ]; then npm run start-prod; else npm run start-app-dev; fi",
     "start-prod": "node server.js",
-    "build": "npx tsc server.ts && react-scripts build",
+    "start-app-dev": "sh ./dev-entrypoint.sh react-scripts start",
+    "build": "npm run build-server && npm run build-app",
+    "build-app": "react-scripts build",
+    "build-server": "npx tsc server.ts",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "express": "node server.js",
-    "build-express": "npm run build && node server.js",
-    "express-nodemon": "npx nodemon --exec npm run express --ext ts"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

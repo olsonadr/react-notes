@@ -11,6 +11,7 @@ const app = express();
 import { Profile, ProfileWithNotes, Note } from "./server_src/interfaces";
 import { Server, Socket } from "socket.io";
 
+
 // ----------------------------------------------------------------------
 // Static Serving of React App
 // ----------------------------------------------------------------------
@@ -42,9 +43,12 @@ interface InterServerEvents { }
 interface SocketData { }
 
 // Socket.io Requires
-const PORT: number = parseInt((process.env.SEPARATE_PROCESSES ? process.env.SERVER_DEV_PORT : undefined)
-    || process.env.PORT
-    || "3000");
+const PORT: number =
+    parseInt(
+        (process.env.SEPARATE_PROCESSES ? process.env.SERVER_DEV_PORT : undefined)
+        ?? process.env.PORT
+        ?? "3000"
+    );
 const http = require("http").createServer(app);
 const io = new Server<
     ClientToServerEvents,
@@ -55,7 +59,6 @@ const io = new Server<
     cors: {
         origin: [
             `http://localhost:${PORT}`,
-            `http://wow-nick-office-tower:${PORT}`,
             'https://notes.nicholasolson.dev',
         ],
     }
@@ -63,6 +66,9 @@ const io = new Server<
 
 // PostgreSQL Requires
 const { Pool } = require("pg");
+
+// fs Requires to Read Secret Files
+const fs = require("fs");
 
 // Get psql helper to get user's data given Auth0 values (name, email, picture)
 const { checkNewUser_client } = require(path.join(__dirname, "server_src/auth_checkNewUser.ts"));
@@ -83,8 +89,17 @@ const { getUID_client } = require(path.join(__dirname, "server_src/auth_getUID.t
 const { getProfile_client } = require(path.join(__dirname, "server_src/auth_getProfile.ts"));
 
 // Setup postgresql connection pool
+const psql_url = (
+    (process.env.NODE_ENV === 'production'
+        ? process.env.DATABASE_URL
+        : process.env.DATABASE_URL_DEV)
+    ?? (`postgresql://${process.env.POSTGRES_USER}:${(
+        process.env.POSTGRES_PASSWORD
+        ?? fs.readFileSync(process.env.POSTGRES_PASSWORD_FILE, "utf8")
+    )}@${process.env.POSTGRES_SERVER}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`)
+);
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || process.env.DATABASE_URL_DEV,
+    connectionString: psql_url,
     ssl: (process.env.POSTGRES_SSL && process.env.POSTGRES_SSL === "true") ? {
         rejectUnauthorized: false
     } : false
@@ -103,7 +118,7 @@ const res = pool.connect((err, client, done) => {
     } else {
         console.log("Connected to psql database!");
         done();
-    }    
+    }
 });
 
 // Handler for connected socket.io clients
@@ -117,7 +132,7 @@ io.on('connection', async (socket: Socket) => {
         let logMsg = "";
         logMsg += 'Received profile request';
         console.log('Received profile request with msg ', msg, '...');
-        
+
         if (msg && msg.email && msg.name && msg.user_id) {
             console.log('Making psql connection');
             // Create psql connection for them
