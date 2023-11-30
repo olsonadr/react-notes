@@ -15,7 +15,7 @@ jobs:
       - name: Populate Secret Files
         run: echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/postgres_password
       - name: Build Container
-        run: docker compose build --build-arg REACT_APP_AUTH0_DOMAIN="${REACT_APP_AUTH0_DOMAIN}" --build-arg REACT_APP_AUTH0_CLIENT_ID="${REACT_APP_AUTH0_CLIENT_ID}"
+        run: docker compose build --build-arg REACT_APP_AUTH0_DOMAIN="${{ vars.REACT_APP_AUTH0_DOMAIN }}" --build-arg REACT_APP_AUTH0_CLIENT_ID="${{ vars.REACT_APP_AUTH0_CLIENT_ID }}"
       - name: Compose Up
         run: docker compose up -d
       - name: Compose Down

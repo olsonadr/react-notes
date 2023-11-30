@@ -63,9 +63,6 @@ ENV REACT_APP_AUTH0_CLIENT_ID=${REACT_APP_AUTH0_CLIENT_ID}
 # Run the build script.
 RUN npm run build-app
 
-# Remove tmp .env file
-RUN rm -f .env
-
 ################################################################################
 # Create a stage for building the server.
 FROM deps as build_server
@@ -91,7 +88,7 @@ ARG NODE_ENV
 
 # Get runtime server env if given at build
 RUN --mount=type=secret,id=server_env \
-    if [[ -f "/run/secrets/server_env" ]; then \
+    if [[ -f "/run/secrets/server_env" ]]; then \
         cp /run/secrets/server_env .env; \
     fi
 
