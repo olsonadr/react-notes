@@ -4,7 +4,7 @@ name: Docker Compose
 
 on:
   push:
-    branches: [ deployment ]
+    branches: [deployment]
 
 jobs:
   build-run-push:
@@ -12,8 +12,12 @@ jobs:
     environment: DockerHub
     steps:
       - uses: actions/checkout@v3
+      - name: Populate Secret Files
+        run: echo "${{ secrets.POSTGRES_PASSWORD }}" > secrets/postgres_password
       - name: Build Container
-        run: docker compose build
+        run: docker compose build \
+          --build-arg REACT_APP_AUTH0_DOMAIN="${REACT_APP_AUTH0_DOMAIN}" \
+          --build-arg REACT_APP_AUTH0_CLIENT_ID="${REACT_APP_AUTH0_CLIENT_ID}"
       - name: Compose Up
         run: docker compose up -d
       - name: Compose Down
